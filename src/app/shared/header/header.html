@@ -1,0 +1,19 @@
+<div class="flex items-center justify-between p-4 bg-white shadow-md">
+    <div>
+        <a routerLink="/">
+            <img 
+                src="assets/VoyageOpura_Logo.jpg" 
+                alt="Logo VoyageOpura"
+                class="rounded-full w-16 h-16 object-cover"
+                />
+        </a>
+    </div>
+    <nav class="flex space-x-4">
+        <a routerLink="/" class="text-gray-700 hover:text-blue-500">Accueil</a>
+        <a routerLink="/voyages" class="text-gray-700 hover:text-blue-500">Voyages</a>
+        <a routerLink="/destinations" class="text-gray-700 hover:text-blue-500">Destinations</a>
+        <a routerLink="/favoris" class="text-gray-700 hover:text-blue-500">Favoris</a>
+    </nav>
+</div>
+<router-outlet></router-outlet>
+
