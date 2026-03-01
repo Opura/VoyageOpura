@@ -1,19 +1,19 @@
-<div class="flex items-center justify-between p-4 bg-white shadow-md">
+<header class="flex items-center justify-between p-4 backdrop-blur-3xl fixed w-full top-0 z-50 text-[#181a24]">
     <div>
         <a routerLink="/">
             <img 
                 src="assets/VoyageOpura_Logo.jpg" 
                 alt="Logo VoyageOpura"
-                class="rounded-full w-16 h-16 object-cover"
+                class="rounded-full w-16 h-16 hover:scale-125 transition-transform duration-300"
                 />
         </a>
     </div>
     <nav class="flex space-x-4">
-        <a routerLink="/" class="text-gray-700 hover:text-blue-500">Accueil</a>
-        <a routerLink="/voyages" class="text-gray-700 hover:text-blue-500">Voyages</a>
-        <a routerLink="/destinations" class="text-gray-700 hover:text-blue-500">Destinations</a>
-        <a routerLink="/favoris" class="text-gray-700 hover:text-blue-500">Favoris</a>
+        <a routerLink="/" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Accueil</a>
+        <a routerLink="/voyages" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Voyages</a>
+        <a routerLink="/destinations" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Destinations</a>
+        <a routerLink="/favoris" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Favoris</a>
     </nav>
-</div>
+</header>
 <router-outlet></router-outlet>
 
