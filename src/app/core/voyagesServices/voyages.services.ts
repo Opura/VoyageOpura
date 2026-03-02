@@ -29,5 +29,15 @@ export class VoyagesServices {
       })
     );
   }
+
+  getVoyages(): Observable<Voyage[]> {
+    return this.http.get<ApiResponse>(`${this.BASE_URL}/voyages`).pipe(
+      map(response => response.data),
+      catchError((error) => {
+        console.error('Error fetching voyages:', error);
+        return throwError(() => error);
+      })
+    );
+  }
   
 }

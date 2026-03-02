@@ -18,7 +18,7 @@ import { Voyage } from '../../../core/models/voyage.model';
 export class Promoted implements OnInit {
   voyagesServices = inject(VoyagesServices);
 
-  voyagesPromoted = signal<Voyage[]>([]);
+  voyagesPromoted= signal<Voyage[]>([]);
 
   isLoading = signal<boolean>(true);
 
