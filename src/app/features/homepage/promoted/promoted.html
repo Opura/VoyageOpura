@@ -1,7 +1,7 @@
 <section>
     <div class="container mx-auto px-4 py-16 text-center">
         <h1 class="text-4xl md:text-5xl font-bold mb-6">Profitez d'offres exceptionnelles sur notre sélection de voyages</h1>
-        <p class="text-lg md:text-xl mb-8">Découvrez des destinations de rêve, des offres exclusives et des expériences inoubliables.</p>
+        <p class="text-lg md:text-xl">Découvrez des destinations de rêve, des offres exclusives et des expériences inoubliables.</p>
     </div>
     <div>
         @if (isLoading()) {
@@ -13,20 +13,23 @@
         }
 
         @if (!isLoading() && voyagesPromoted().length > 0) {
-            <div class="">
-                <p-carousel [value]="voyagesPromoted()" [numVisible]="3" [numScroll]="1"  >
+            <div class="container mx-auto">
+                <p-carousel [value]="voyagesPromoted()" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions" [circular]="true" autoplayInterval="5000" >
                     <ng-template pTemplate="item" let-voyage>
-                    <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4">
+                    <div class="m-2 p-4 space-y-8">
                         <div class="mb-4">
                             <div class="relative mx-auto">
-                                <!-- <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full rounded-border"  /> -->
-                                <img src="https://picsum.photos/400/200" alt="test" />
+                                <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 rounded-border"  />
                                 <p-tag [value]="voyage.price + '€'" />
                             </div>
                         </div>
-                        <h3 class="mb-4 font-medium">{{ voyage.title }}</h3>
-                        <p>{{ voyage.description }}</p>
-                        <p-button label="Voir le voyage" />
+                        <div>
+                            <h3 class="mb-4 font-bold text-xl">{{ voyage.title }}</h3>
+                            <p>{{ voyage.description }}</p>
+                        </div>
+                        <div>
+                            <a routerLink="/voyages/{{ voyage.id }}" class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-3 text-center text:sm md:text-lg font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300">Voir les détails</a>
+                        </div>
                     </div>
                     </ng-template>
                 </p-carousel>

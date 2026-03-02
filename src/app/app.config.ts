@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     providePrimeNG({
-      unstyled: true,
+      //unstyled: true,
     })
   ]
 };

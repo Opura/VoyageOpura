@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
@@ -9,7 +10,7 @@ import { Voyage } from '../../../core/models/voyage.model';
 
 @Component({
   selector: 'app-promoted',
-  imports: [ButtonModule, CarouselModule, TagModule],
+  imports: [ButtonModule, CarouselModule, TagModule, RouterLink],
   templateUrl: './promoted.html',
   styleUrl: './promoted.css',
   providers: [VoyagesServices]
