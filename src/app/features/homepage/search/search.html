@@ -1,1 +1,15 @@
-<p>search works!</p>
+<section class="bg-[#e6eaf3] text-[#181a24] pb-16">
+    <div class="container mx-auto px-4 pt-16 pb-8 text-center">
+        <h2 class="text-4xl md:text-5xl font-bold mb-6">Recherchez une destination</h2>
+        <p class="text-lg md:text-xl">Votre voyage de rêve à portée de clic</p>
+    </div>
+    <div class="card flex justify-center gap-4">
+        <input 
+            [(ngModel)]="value" 
+            type="text" 
+            placeholder="Entrez une destination, une activité ou un thème de voyage" 
+            class="w-full md:w-1/2 lg:w-1/3 border p-1" />
+        <a [routerLink]="['/voyages']" [queryParams]="{ q: value }"
+            class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-3 text-center text:sm md:text-lg font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300">Rechercher</a>
+    </div>
+</section> 
