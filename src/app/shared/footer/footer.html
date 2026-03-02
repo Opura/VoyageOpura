@@ -1,1 +1,28 @@
-<p>footer works!</p>
+<footer class="bg-[#181a24] text-[#ffe066] p-4 flex justify-between items-center">
+    <div>
+        <a routerLink="/">
+            <img 
+                src="assets/VoyageOpura_Logo.jpg" 
+                alt="Logo VoyageOpura"
+                class="rounded-full w-16 h-16 hover:scale-125 transition-transform duration-300 border border-white"
+                />
+        </a>
+    </div>
+    <div>
+        <nav class="flex flex-col space-x-4">
+            <a routerLink="/" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Accueil</a>
+            <a routerLink="/voyages" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Voyages</a>
+            <a routerLink="/destinations" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Destinations</a>
+            <a routerLink="/favoris" class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-3 py-1">Favoris</a>
+        </nav>
+    </div>
+    <div>
+        <p>&copy; 2026 VoyageOpura. Tous droits réservés.</p>
+        <p>Contactez-nous : <a href="mailto:contact@voyageopura.com" class="text-[#ffe066] hover:text-[#ffd54f]">contact@voyageopura.com</a></p>
+    </div>
+    <div class="text-center">
+        <a href="#" class="text-[#ffe066] hover:text-[#ffd54f] mx-2">Facebook</a>
+        <a href="#" class="text-[#ffe066] hover:text-[#ffd54f] mx-2">Twitter</a>
+        <a href="#" class="text-[#ffe066] hover:text-[#ffd54f] mx-2">Instagram</a>
+    </div>
+</footer>
