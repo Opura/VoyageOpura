@@ -1,4 +1,5 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
@@ -11,29 +12,9 @@ import { VoyagesServices } from '../../../core/voyagesServices/voyages.services'
   templateUrl: './voyages-list.html',
   styleUrl: './voyages-list.css',
 })
-export class VoyagesList implements OnInit {
+export class VoyagesList {
   voyagesServices = inject(VoyagesServices);
 
-  voyages = signal<Voyage[]>([]);
-
-  isLoading = signal<boolean>(true);
-
-  error = signal<string | null>(null);
-
-  ngOnInit() {
-    this.isLoading.set(true);
-
-    this.voyagesServices.getVoyages().subscribe({
-      next: (voyages) => {
-        this.voyages.set(voyages);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.error.set('Failed to load voyages. Please try again later.');
-        this.isLoading.set(false);
-        console.error(error);
-      }
-    });
-  }
+  voyages = toSignal(this.voyagesServices.getVoyages(), { initialValue: [] as Voyage[] });
 
 }

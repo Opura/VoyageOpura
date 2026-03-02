@@ -4,15 +4,7 @@
         <p class="text-lg md:text-xl">Envolez-vous vers des destinations incroyables et inoubliables !</p>
     </div>
     <div>
-        @if (isLoading()) {
-            <p class="text-center">Chargement des destinations populaires...</p>
-        }
-
-        @if (error()) {
-            <p class="text-center text-red-500">Une erreur est survenue lors du chargement des destinations populaires. Veuillez réessayer plus tard.</p>
-        }
-
-        @if (!isLoading() && destinations().length > 0) {
+        @if (destinations().length > 0) {
             <div class="container mx-auto">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @for (destination of destinations(); track destination.id) {

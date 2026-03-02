@@ -7,15 +7,7 @@
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Catalogue des voyages</h1>
         <p class="text-lg md:text-2xl mb-8">Parcourez notre sélection de destinations et d'activités de voyage</p>
         <div class="relative">
-            @if (isLoading()) {
-                <p class="text-center">Chargement des voyages...</p>
-            }
-    
-            @if (error()) {
-                <p class="text-center text-red-500">Une erreur est survenue lors du chargement des voyages. Veuillez réessayer plus tard.</p>
-            }
-    
-            @if (!isLoading() && voyages().length > 0) {
+            @if (voyages().length > 0) {
                 <div class="container mx-auto">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @for (voyage of voyages(); track voyage.id) {

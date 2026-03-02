@@ -1,5 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { ButtonModule } from 'primeng/button';
 import { CarouselModule } from 'primeng/carousel';
@@ -13,35 +14,15 @@ import { Voyage } from '../../../core/models/voyage.model';
   imports: [ButtonModule, CarouselModule, TagModule, RouterLink],
   templateUrl: './promoted.html',
   styleUrl: './promoted.css',
-  providers: [VoyagesServices]
 })
-export class Promoted implements OnInit {
+export class Promoted {
   voyagesServices = inject(VoyagesServices);
 
-  voyagesPromoted= signal<Voyage[]>([]);
-
-  isLoading = signal<boolean>(true);
-
-  error = signal<string | null>(null);
+  voyagesPromoted= toSignal(this.voyagesServices.getVoyagesPromoted(), { initialValue: [] as Voyage[] });
 
   responsiveOptions: any[] | undefined;
 
   ngOnInit() {
-    this.isLoading.set(true);
-    
-    this.voyagesServices.getVoyagesPromoted().subscribe({
-      next: (data) => {
-        console.log('Promoted voyages fetched successfully:', data);
-        this.voyagesPromoted.set(data);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.error.set('Failed to load promoted voyages. Please try again later.');
-        this.isLoading.set(false);
-        console.error(error);
-      }
-    });
-
     this.responsiveOptions = [
       {
           breakpoint: '1400px',

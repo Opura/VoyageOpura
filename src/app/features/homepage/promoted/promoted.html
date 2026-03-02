@@ -4,15 +4,7 @@
         <p class="text-lg md:text-xl">Découvrez des destinations de rêve, des offres exclusives et des expériences inoubliables.</p>
     </div>
     <div>
-        @if (isLoading()) {
-            <p class="text-center">Chargement des voyages en promotion...</p>
-        }
-
-        @if (error()) {
-            <p class="text-center text-red-500">Une erreur est survenue lors du chargement des voyages en promotion. Veuillez réessayer plus tard.</p>
-        }
-
-        @if (!isLoading() && voyagesPromoted().length > 0) {
+        @if (voyagesPromoted().length > 0) {
             <div class="container mx-auto">
                 <p-carousel [value]="voyagesPromoted()" [numVisible]="3" [numScroll]="1" [responsiveOptions]="responsiveOptions" [circular]="true" autoplayInterval="5000" >
                     <ng-template pTemplate="item" let-voyage>

@@ -1,5 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { DestinationsServices } from '../../../core/destinationsServices/destinations.services';
 import { Destination } from '../../../core/models/destination.model';
@@ -10,29 +11,8 @@ import { Destination } from '../../../core/models/destination.model';
   templateUrl: './famous.html',
   styleUrl: './famous.css',
 })
-export class Famous implements OnInit {
+export class Famous  {
   destinationsServices = inject(DestinationsServices);
 
-  destinations = signal<Destination[]>([]);
-
-  isLoading = signal<boolean>(true);
-
-  error = signal<string | null>(null);
-
-  ngOnInit() {
-    this.isLoading.set(true);
-    
-    this.destinationsServices.getDestinations().subscribe({
-      next: (data) => {
-        console.log('Destinations fetched successfully:', data);
-        this.destinations.set(data);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.error.set('Failed to load destinations. Please try again later.');
-        this.isLoading.set(false);
-        console.error(error);
-      }
-    });
-  }
+  destinations = toSignal(this.destinationsServices.getDestinations(), { initialValue: [] as Destination[] });
 }
