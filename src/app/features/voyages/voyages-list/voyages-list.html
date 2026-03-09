@@ -109,16 +109,16 @@
     <div class="relative z-10 flex flex-col h-full items-center px-4 py-30 transition-all duration-300" [class.blur-sm]="visible">
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Catalogue des voyages</h1>
         <p class="text-lg md:text-2xl mb-8">Parcourez notre sélection de destinations et d'activités de voyage</p>
-        <div class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-4 py-2 font-semibold mb-8 bg-white z-100">
+        <div class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-6 py-2 font-semibold mb-8 bg-white z-100">
             <p-button (click)="visible = true">
                 <span class="">Filtres</span>
             </p-button>
         </div>
         <div class="relative">
-            @if (filteredVoyages().length > 0) {
+            @if (voyages().length > 0) {
                 <div class="container mx-auto">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        @for (voyage of filteredVoyages(); track voyage.id) {
+                        @for (voyage of voyages(); track voyage.id) {
                             <div class="relative rounded-border overflow-hidden">
                                 <img [src]="voyage.imageUrls" [alt]="voyage.title" class="w-full h-64 object-cover" />
                                 <h3 class="font-bold text-xl">{{ voyage.title }}</h3>

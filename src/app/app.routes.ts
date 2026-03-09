@@ -12,6 +12,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/voyages/voyages-list/voyages-list').then(m => m.VoyagesList),
     },
     {
+        path: 'voyages/search',
+        loadComponent: () => import('./features/voyages/search-results/search-results').then(m => m.SearchResults),
+    },
+    {
         path: 'voyages/:id',
         loadComponent: () => import('./features/voyages/voyage-detail/voyage-detail').then(m => m.VoyageDetail),
     },

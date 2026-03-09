@@ -1,6 +1,9 @@
 <app-header></app-header>
 
 <section class="relative text-[#181a24] min-h-screen">
+    <div class="absolute inset-0 overflow-hidden">
+        <img src="../../../../assets/Voyages.jpg" alt="Many traveling items" class="w-full h-full object-cover object-center opacity-35 fixed">
+    </div>
     <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Résultats de recherche</h1>
         <p class="text-lg md:text-2xl mb-8">{{ filteredVoyages().length }} voyage(s) trouvé(s)</p>
@@ -32,4 +35,4 @@
     </div>
 </section>
 
-<app-footer></app-footer>
+<app-footer class="relative z-10"></app-footer>
