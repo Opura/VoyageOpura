@@ -10,7 +10,15 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     providePrimeNG({
-      //unstyled: true,
+      theme: {
+        preset: 'lara-light-indigo',
+        options: {
+          cssLayer: {
+            name: 'primeng',
+            order: 'theme, base, primeng'
+          }
+        }
+      }
     })
   ]
 };

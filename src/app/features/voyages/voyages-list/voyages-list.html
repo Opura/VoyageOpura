@@ -1,11 +1,36 @@
 <app-header></app-header>
+
+@if (visible) {
+    <div 
+        class="fixed inset-0 bg-black/40 z-[9998]"
+        (click)="visible = false">
+    </div>
+}
+
+<p-drawer 
+    [(visible)]="visible"
+    [modal]="false"
+    header="Filtres de recherche"
+    appendTo="body"
+    styleClass="!z-[9999] bg-white/90 border-none shadow-lg p-4">
+    <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+        consequat.
+    </p>
+</p-drawer>
+
 <section class="relative text-[#181a24] min-h-screen">
     <div class="absolute inset-0 overflow-hidden">
         <img src="../../../../assets/Voyages.jpg" alt="Many traveling items" class="w-full h-full object-cover object-center opacity-35 fixed">
     </div>
-    <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
+    <div class="relative z-10 flex flex-col h-full items-center px-4 py-30 transition-all duration-300" [class.blur-sm]="visible">
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Catalogue des voyages</h1>
         <p class="text-lg md:text-2xl mb-8">Parcourez notre sélection de destinations et d'activités de voyage</p>
+        <div class="card flex justify-center mb-8 border z-100">
+            <p-button (click)="visible = true">
+                <span class="px-4 py-2">Filtres</span>
+            </p-button>
+        </div>
         <div class="relative">
             @if (voyages().length > 0) {
                 <div class="container mx-auto">
@@ -19,8 +44,8 @@
                     </div>
                 </div>
             }
-    </div>
+        </div>
     </div>
 </section>
 
-<app-footer class="relative z-10"></app-footer>
+<app-footer class="relative z-10 transition-all duration-300" [class.blur-sm]="visible"></app-footer>
