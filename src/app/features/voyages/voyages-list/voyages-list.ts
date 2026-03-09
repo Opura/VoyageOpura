@@ -1,12 +1,13 @@
-import { Component, signal, computed, effect, inject } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { toSignal, toObservable } from '@angular/core/rxjs-interop';
+import { switchMap } from 'rxjs';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
 import { Voyage } from '../../../core/models/voyage.model';
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
-
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 
@@ -23,9 +24,15 @@ export class VoyagesList {
 
   currentPage = signal(1);
   totalPages = 5;
-  voyages = signal<Voyage[]>([]);
 
-  // Filtres (pour le drawer)
+  // Réagit automatiquement au changement de currentPage, sans subscribe ni effect
+  voyages = toSignal(
+    toObservable(this.currentPage).pipe(
+      switchMap(page => this.voyagesServices.getVoyages(page))
+    ),
+    { initialValue: [] as Voyage[] }
+  );
+
   visible = false;
   searchText = signal('');
   category = signal('');
@@ -39,13 +46,6 @@ export class VoyagesList {
   difficulty = signal('');
   sortOption = signal('priceAsc');
 
-  constructor() {
-    // Charge les voyages de la page courante
-    effect((): void => {
-      this.voyagesServices.getVoyages(this.currentPage()).subscribe(v => this.voyages.set(v));
-    });
-  }
-
   previousPage(): void {
     if (this.currentPage() > 1) this.currentPage.set(this.currentPage() - 1);
   }
@@ -54,7 +54,6 @@ export class VoyagesList {
     if (this.currentPage() < this.totalPages) this.currentPage.set(this.currentPage() + 1);
   }
 
-  // Redirige vers la page de résultats avec les filtres dans l'URL
   applyFilters(): void {
     this.router.navigate(['/voyages/search'], {
       queryParams: {

@@ -4,9 +4,14 @@ import { catchError, forkJoin, map, Observable, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Voyage } from '../models/voyage.model';
+import { Destination } from '../models/destination.model';
 
-interface ApiResponse {
+interface ApiResponseVoyage {
   data: Voyage[];
+}
+
+interface ApiResponseDestination {
+  data: Destination[];
 }
 
 @Injectable({
@@ -21,7 +26,7 @@ export class VoyagesServices {
   http = inject(HttpClient);
 
   getVoyagesPromoted(): Observable<Voyage[]> {
-    return this.http.get<ApiResponse>(`${this.BASE_URL}/voyages/featured`).pipe(
+    return this.http.get<ApiResponseVoyage>(`${this.BASE_URL}/voyages/featured`).pipe(
       map(response => response.data.filter(voyage => voyage.isPromoted === true)),
       catchError((error) => {
         console.error('Error fetching promoted voyages:', error);
@@ -31,7 +36,7 @@ export class VoyagesServices {
   }
 
   getVoyages(page: number = 1): Observable<Voyage[]> {
-    return this.http.get<ApiResponse>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
+    return this.http.get<ApiResponseVoyage>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
       map(response => response.data),
       catchError((error) => {
         console.error('Error fetching voyages:', error);
@@ -49,6 +54,16 @@ export class VoyagesServices {
       map(pages => pages.flat()),
       catchError((error) => {
         console.error('Error fetching all voyages:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getAllDestinations(): Observable<Destination[]> {
+    return this.http.get<ApiResponseDestination>(`${this.BASE_URL}/destinations`).pipe(
+      map(response => response.data),
+      catchError((error) => {
+        console.error('Error fetching destinations:', error);
         return throwError(() => error);
       })
     );

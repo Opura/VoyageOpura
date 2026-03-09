@@ -1,3 +1,5 @@
+import { Destination } from "./destination.model";
+
 export interface Voyage {
   id: string;                  // uuid
     title: string;
@@ -18,5 +20,5 @@ export interface Voyage {
     isPromoted: boolean;
     averageRating: number;       // 0–5
     createdAt: string;
-    //destination: Destination;    // relation nestée
+    destination: Destination;    // relation nestée
 }

@@ -1,9 +1,11 @@
-import { Component, signal, computed, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, computed, inject } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
 import { Voyage } from '../../../core/models/voyage.model';
+import { Destination } from '../../../core/models/destination.model';
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
 import { ButtonModule } from 'primeng/button';
 
@@ -18,20 +20,25 @@ export class SearchResults {
   route = inject(ActivatedRoute);
   router = inject(Router);
 
-  allVoyages = signal<Voyage[]>([]);
-  isLoading = signal(true);
+  // Données
+  allVoyages = toSignal(this.voyagesServices.getAllVoyages(), { initialValue: [] as Voyage[] });
+  allDestinations = toSignal(this.voyagesServices.getAllDestinations(), { initialValue: [] as Destination[] });
+  isLoading = computed(() => this.allVoyages().length === 0);
 
-  searchText = signal('');
-  category = signal('');
-  continent = signal('');
-  priceMin = signal<number | null>(null);
-  priceMax = signal<number | null>(null);
-  durationMin = signal<number | null>(null);
-  durationMax = signal<number | null>(null);
-  departureDate = signal('');
-  onlyAvailable = signal(false);
-  difficulty = signal('');
-  sortOption = signal('priceAsc');
+  // Filtres lus depuis l'URL via toSignal
+  private params = toSignal(this.route.queryParams, { initialValue: {} as Params });
+
+  searchText  = computed(() => this.params()['searchText'] || '');
+  category    = computed(() => this.params()['category'] || '');
+  continent   = computed(() => this.params()['continent'] || '');
+  priceMin    = computed(() => this.params()['priceMin'] ? Number(this.params()['priceMin']) : null);
+  priceMax    = computed(() => this.params()['priceMax'] ? Number(this.params()['priceMax']) : null);
+  durationMin = computed(() => this.params()['durationMin'] ? Number(this.params()['durationMin']) : null);
+  durationMax = computed(() => this.params()['durationMax'] ? Number(this.params()['durationMax']) : null);
+  departureDate  = computed(() => this.params()['departureDate'] || '');
+  onlyAvailable  = computed(() => this.params()['onlyAvailable'] === 'true');
+  difficulty     = computed(() => this.params()['difficulty'] || '');
+  sortOption     = computed(() => this.params()['sortOption'] || 'priceAsc');
 
   filteredVoyages = computed(() => {
     let result = this.allVoyages();
@@ -42,6 +49,12 @@ export class SearchResults {
     }
     if (this.category()) {
       result = result.filter(v => v.category === this.category());
+    }
+    if (this.continent()) {
+      result = result.filter(v => {
+        const dest = this.allDestinations().find(d => d.id === v.destinationId);
+        return dest?.continent === this.continent();
+      });
     }
     if (this.priceMin() !== null) {
       result = result.filter(v => v.price >= this.priceMin()!);
@@ -66,43 +79,15 @@ export class SearchResults {
     }
 
     switch (this.sortOption()) {
-      case 'priceAsc':
-        result = result.slice().sort((a, b) => a.price - b.price); break;
-      case 'priceDesc':
-        result = result.slice().sort((a, b) => b.price - a.price); break;
-      case 'bestRating':
-        result = result.slice().sort((a, b) => b.averageRating - a.averageRating); break;
-      case 'durationAsc':
-        result = result.slice().sort((a, b) => a.duration - b.duration); break;
-      case 'departureSoon':
-        result = result.slice().sort((a, b) => a.departureDate.localeCompare(b.departureDate)); break;
+      case 'priceAsc':    result = result.slice().sort((a, b) => a.price - b.price); break;
+      case 'priceDesc':   result = result.slice().sort((a, b) => b.price - a.price); break;
+      case 'bestRating':  result = result.slice().sort((a, b) => b.averageRating - a.averageRating); break;
+      case 'durationAsc': result = result.slice().sort((a, b) => a.duration - b.duration); break;
+      case 'departureSoon': result = result.slice().sort((a, b) => a.departureDate.localeCompare(b.departureDate)); break;
     }
 
     return result;
   });
-
-  constructor() {
-    // Charge tous les voyages
-    this.voyagesServices.getAllVoyages().subscribe(voyages => {
-      this.allVoyages.set(voyages);
-      this.isLoading.set(false);
-    });
-
-    // Lit les filtres depuis l'URL
-    this.route.queryParams.subscribe(params => {
-      this.searchText.set(params['searchText'] || '');
-      this.category.set(params['category'] || '');
-      this.continent.set(params['continent'] || '');
-      this.priceMin.set(params['priceMin'] ? Number(params['priceMin']) : null);
-      this.priceMax.set(params['priceMax'] ? Number(params['priceMax']) : null);
-      this.durationMin.set(params['durationMin'] ? Number(params['durationMin']) : null);
-      this.durationMax.set(params['durationMax'] ? Number(params['durationMax']) : null);
-      this.departureDate.set(params['departureDate'] || '');
-      this.onlyAvailable.set(params['onlyAvailable'] === 'true');
-      this.difficulty.set(params['difficulty'] || '');
-      this.sortOption.set(params['sortOption'] || 'priceAsc');
-    });
-  }
 
   backToCatalogue(): void {
     this.router.navigate(['/voyages']);
