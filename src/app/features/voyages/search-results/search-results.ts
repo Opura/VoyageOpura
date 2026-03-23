@@ -1,5 +1,5 @@
 import { Component, computed, inject } from '@angular/core';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Params, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 import { Header } from "../../../shared/header/header";
@@ -11,7 +11,7 @@ import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-search-results',
-  imports: [Header, Footer, ButtonModule],
+  imports: [Header, Footer, ButtonModule, RouterLink],
   templateUrl: './search-results.html',
   styleUrl: './search-results.css',
 })
@@ -20,12 +20,10 @@ export class SearchResults {
   route = inject(ActivatedRoute);
   router = inject(Router);
 
-  // Données
   allVoyages = toSignal(this.voyagesServices.getAllVoyages(), { initialValue: [] as Voyage[] });
   allDestinations = toSignal(this.voyagesServices.getAllDestinations(), { initialValue: [] as Destination[] });
   isLoading = computed(() => this.allVoyages().length === 0);
 
-  // Filtres lus depuis l'URL via toSignal
   private params = toSignal(this.route.queryParams, { initialValue: {} as Params });
 
   searchText  = computed(() => this.params()['searchText'] || '');

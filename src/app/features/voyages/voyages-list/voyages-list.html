@@ -119,9 +119,11 @@
                 <div class="container mx-auto">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         @for (voyage of voyages(); track voyage.id) {
-                            <div class="relative rounded-border overflow-hidden">
-                                <img [src]="voyage.imageUrls" [alt]="voyage.title" class="w-full h-64 object-cover" />
-                                <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                            <div class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
+                                <a [routerLink]="['/voyages', voyage.id]">
+                                    <img [src]="voyage.imageUrls" [alt]="voyage.title" class="w-full h-64 object-cover" />
+                                    <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                                </a>
                             </div>
                         }
                     </div>

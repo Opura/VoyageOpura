@@ -1,5 +1,5 @@
 import { Component, signal, inject } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
@@ -13,7 +13,7 @@ import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-voyages-list',
-  imports: [Header, Footer, DrawerModule, ButtonModule, FormsModule],
+  imports: [Header, Footer, DrawerModule, ButtonModule, FormsModule, RouterLink],
   templateUrl: './voyages-list.html',
   styleUrl: './voyages-list.css',
 })
@@ -25,7 +25,6 @@ export class VoyagesList {
   currentPage = signal(1);
   totalPages = 5;
 
-  // Réagit automatiquement au changement de currentPage, sans subscribe ni effect
   voyages = toSignal(
     toObservable(this.currentPage).pipe(
       switchMap(page => this.voyagesServices.getVoyages(page))
