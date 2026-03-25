@@ -5,8 +5,12 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Destination } from '../models/destination.model';
 
-interface ApiResponse {
+interface ApiResponseDestination {
   data: Destination[];
+}
+
+interface ApiResponseDestinationById {
+  data: Destination;
 }
 
 @Injectable({
@@ -21,10 +25,20 @@ export class DestinationsServices {
   http = inject(HttpClient);
 
   getDestinations(): Observable<Destination[]> {
-    return this.http.get<ApiResponse>(`${this.BASE_URL}/destinations`).pipe(
+    return this.http.get<ApiResponseDestination>(`${this.BASE_URL}/destinations`).pipe(
       map(response => response.data),
       catchError((error) => {
         console.error('Error fetching destinations:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getDestinationById(id: string): Observable<Destination> {
+    return this.http.get<ApiResponseDestinationById>(`${this.BASE_URL}/destinations/${id}`).pipe(
+      map(response => response.data),
+      catchError((error) => {
+        console.error('Error fetching destination by ID:', error);
         return throwError(() => error);
       })
     );

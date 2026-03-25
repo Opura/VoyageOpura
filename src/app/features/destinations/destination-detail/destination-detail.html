@@ -1,1 +1,55 @@
-<p>destination-detail works!</p>
+<app-header></app-header>
+
+<section class="relative text-[#181a24] min-h-screen">
+    <div class="absolute inset-0 overflow-hidden">
+        <img src="../../../../assets/Voyages.jpg" alt="Destination detail" class="w-full h-full object-cover object-center opacity-35 fixed">
+    </div>
+
+    <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
+        @if (destination(); as d) {
+        <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg overflow-hidden">
+            <img [src]="d.imageUrl" [alt]="d.name" class="w-full h-80 object-cover" />
+
+            <div class="p-6">
+            <h1 class="text-3xl md:text-4xl font-bold">{{ d.name }}</h1>
+            <p class="mt-2 text-slate-700">{{ d.country }} - {{ d.continent }}</p>
+
+            <p class="mt-4 text-slate-800">{{ d.description }}</p>
+
+            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="rounded-xl bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Climat</p>
+                <p class="font-semibold">{{ d.climate }}</p>
+                </div>
+                <div class="rounded-xl bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Note moyenne</p>
+                <p class="font-semibold">{{ d.averageRating }}/5</p>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <h2 class="font-bold mb-2">Meilleures saisons</h2>
+                <div class="flex flex-wrap gap-2">
+                @for (season of d.bestSeasons; track season) {
+                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm">{{ season }}</span>
+                }
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <h2 class="font-bold mb-2">Tags</h2>
+                <div class="flex flex-wrap gap-2">
+                @for (tag of d.tags; track tag) {
+                    <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-sm">{{ tag }}</span>
+                }
+                </div>
+            </div>
+            </div>
+        </div>
+        } @else {
+        <p class="mt-8 text-base">Chargement des informations...</p>
+        }
+    </div>
+</section>
+
+<app-footer class="relative"></app-footer>
