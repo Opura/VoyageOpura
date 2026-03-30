@@ -8,6 +8,7 @@ import { TagModule } from 'primeng/tag';
 
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
 import { Voyage } from '../../../core/models/voyage.model';
+import { FavorisServices } from '../../../core/favorisServices/favoris.services';
 
 @Component({
   selector: 'app-promoted',
@@ -17,6 +18,7 @@ import { Voyage } from '../../../core/models/voyage.model';
 })
 export class Promoted {
   voyagesServices = inject(VoyagesServices);
+  favorisService = inject(FavorisServices);
 
   voyagesPromoted= toSignal(this.voyagesServices.getVoyagesPromoted(), { initialValue: [] as Voyage[] });
 
@@ -45,5 +47,13 @@ export class Promoted {
           numScroll: 1
       }
     ];
+  }
+
+  toggleFavorite(id: string): void {
+    this.favorisService.toggleFavorite(id);
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorisService.isFavorite(id);
   }
 }

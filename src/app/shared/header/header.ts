@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink } from '@angular/router';
+import { FavorisServices } from '../../core/favorisServices/favoris.services';
 
 @Component({
   selector: 'app-header',
@@ -8,5 +9,6 @@ import { RouterOutlet, RouterLink } from '@angular/router';
   styleUrl: './header.css',
 })
 export class Header {
-
+  favorisService = inject(FavorisServices);
+  favoritesCount = this.favorisService.favoritesCount;
 }

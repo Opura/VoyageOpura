@@ -8,6 +8,7 @@ import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
 import { Voyage } from '../../../core/models/voyage.model';
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
+import { FavorisServices } from '../../../core/favorisServices/favoris.services';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 
@@ -21,6 +22,7 @@ export class VoyagesList {
   voyagesServices = inject(VoyagesServices);
   router = inject(Router);
   route = inject(ActivatedRoute);
+  favorisService = inject(FavorisServices);
 
   currentPage = signal(1);
   totalPages = 5;
@@ -84,5 +86,13 @@ export class VoyagesList {
     this.onlyAvailable.set(false);
     this.difficulty.set('');
     this.sortOption.set('priceAsc');
+  }
+
+  toggleFavorite(id: string): void {
+    this.favorisService.toggleFavorite(id);
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorisService.isFavorite(id);
   }
 }

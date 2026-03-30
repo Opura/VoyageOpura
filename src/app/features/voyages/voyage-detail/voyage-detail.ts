@@ -3,12 +3,13 @@ import { DatePipe } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { catchError, filter, map, of, switchMap } from 'rxjs';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
 import { ReviewsResponse } from '../../../core/models/reviewsResponse.model';
-import { catchError, filter, map, of, switchMap } from 'rxjs';
+import { FavorisServices } from '../../../core/favorisServices/favoris.services';
 
 @Component({
   selector: 'app-voyage-detail',
@@ -20,6 +21,7 @@ export class VoyageDetail {
   voyagesServices = inject(VoyagesServices);
   route = inject(ActivatedRoute);
   fb = inject(FormBuilder)
+  favorisService = inject(FavorisServices);
 
   voyageId = this.route.snapshot.paramMap.get('id') || '';
 
@@ -136,6 +138,14 @@ export class VoyageDetail {
 
   reviewsReloadUpdate(): void {
     this.reviewsReload.update(v => v + 1);
+  }
+
+  toggleFavorite(id: string): void {
+    this.favorisService.toggleFavorite(id);
+  }
+
+  isFavorite(id: string): boolean {
+    return this.favorisService.isFavorite(id);
   }
 }
 

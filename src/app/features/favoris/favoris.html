@@ -1,4 +1,42 @@
 <app-header></app-header>
 
+<section class="relative text-[#181a24] min-h-screen px-4 py-30">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-center">Mes favoris</h1>
+
+    @if (!hasFavorites()) {
+        <div class="max-w-xl mx-auto text-center bg-white/90 rounded-2xl p-8 shadow">
+            <p class="text-lg mb-4">Aucun favori pour le moment.</p>
+            <p class="mb-6">Explore le catalogue pour ajouter des voyages a ta liste.</p>
+            <a routerLink="/voyages" class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold">
+                Voir le catalogue
+            </a>
+        </div>
+    } @else {
+        <div class="container mx-auto">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @for (voyage of favoriteVoyages(); track voyage.id) {
+                <div class="relative rounded-border overflow-hidden">
+                    <button
+                    type="button"
+                    (click)="toggleFavorite(voyage.id)"
+                    class="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2 py-1 text-xl"
+                    >
+                    {{ isFavorite(voyage.id) ? '♥' : '♡' }}
+                    </button>
+
+                    <a [routerLink]="['/voyages', voyage.id]">
+                    <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 object-cover" />
+                    <div class="p-3">
+                        <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                        <p class="text-sm">{{ voyage.price }}€ — {{ voyage.duration }} jours</p>
+                    </div>
+                    </a>
+                </div>
+                }
+            </div>
+        </div>
+    }
+</section>
+
 <app-footer></app-footer>
 

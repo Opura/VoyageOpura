@@ -9,27 +9,15 @@ export const routes: Routes = [
     },
     {
         path: 'voyages',
-        loadComponent: () => import('./features/voyages/voyages-list/voyages-list').then(m => m.VoyagesList),
-    },
-    {
-        path: 'voyages/search',
-        loadComponent: () => import('./features/voyages/search-results/search-results').then(m => m.SearchResults),
-    },
-    {
-        path: 'voyages/:id',
-        loadComponent: () => import('./features/voyages/voyage-detail/voyage-detail').then(m => m.VoyageDetail),
+        loadChildren: () => import('./features/voyages/voyages.routes').then(m => m.VOYAGES_ROUTES),
     },
     {
         path: 'destinations',
-        loadComponent: () => import('./features/destinations/destinations-list/destinations-list').then(m => m.DestinationsList),
-    },
-    {
-        path: 'destinations/:id',
-        loadComponent: () => import('./features/destinations/destination-detail/destination-detail').then(m => m.DestinationDetail),
+        loadChildren: () => import('./features/destinations/destinations.routes').then(m => m.DESTINATIONS_ROUTES),
     },
     {
         path: 'favoris',
-        loadComponent: () => import('./features/favoris/favoris').then(m => m.Favoris),
+        loadChildren: () => import('./features/favoris/favoris.routes').then(m => m.FAVORIS_ROUTES),
     }
 
 ];

@@ -13,6 +13,14 @@
                             <div class="relative mx-auto">
                                 <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 rounded-border"  />
                                 <p-tag [value]="voyage.price + '€'" />
+                                <button
+                                    type="button"
+                                    (click)="toggleFavorite(voyage.id)"
+                                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow hover:bg-slate-100"
+                                    aria-label="Ajouter ou retirer des favoris"
+                                >
+                                    {{ isFavorite(voyage.id) ? '♥' : '♡' }}
+                                </button>
                             </div>
                         </div>
                         <div>
