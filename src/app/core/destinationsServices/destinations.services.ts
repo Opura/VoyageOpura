@@ -5,14 +5,6 @@ import { catchError, map, Observable, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Destination } from '../models/destination.model';
 
-interface ApiResponseDestination {
-  data: Destination[];
-}
-
-interface ApiResponseDestinationById {
-  data: Destination;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,8 +17,7 @@ export class DestinationsServices {
   http = inject(HttpClient);
 
   getDestinations(): Observable<Destination[]> {
-    return this.http.get<ApiResponseDestination>(`${this.BASE_URL}/destinations`).pipe(
-      map(response => response.data),
+    return this.http.get<Destination[]>(`${this.BASE_URL}/destinations`).pipe(
       catchError((error) => {
         console.error('Error fetching destinations:', error);
         return throwError(() => error);
@@ -34,13 +25,23 @@ export class DestinationsServices {
     );
   }
 
+  getAllDestinations(): Observable<Destination[]> {
+    return this.getDestinations().pipe(
+      map(destinations => destinations || []),
+      catchError((error) => {
+        console.error('Error fetching all destinations:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   getDestinationById(id: string): Observable<Destination> {
-    return this.http.get<ApiResponseDestinationById>(`${this.BASE_URL}/destinations/${id}`).pipe(
-      map(response => response.data),
+    return this.http.get<Destination>(`${this.BASE_URL}/destinations/${id}`).pipe(
       catchError((error) => {
         console.error('Error fetching destination by ID:', error);
         return throwError(() => error);
       })
     );
   }
+
 }

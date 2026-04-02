@@ -7,6 +7,7 @@ import { Footer } from "../../../shared/footer/footer";
 import { Voyage } from '../../../core/models/voyage.model';
 import { Destination } from '../../../core/models/destination.model';
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
+import { DestinationsServices } from '../../../core/destinationsServices/destinations.services';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
@@ -17,11 +18,13 @@ import { ButtonModule } from 'primeng/button';
 })
 export class SearchResults {
   voyagesServices = inject(VoyagesServices);
+  destinationsServices = inject(DestinationsServices);
+
   route = inject(ActivatedRoute);
   router = inject(Router);
 
   allVoyages = toSignal(this.voyagesServices.getAllVoyages(), { initialValue: [] as Voyage[] });
-  allDestinations = toSignal(this.voyagesServices.getAllDestinations(), { initialValue: [] as Destination[] });
+  allDestinations = toSignal(this.destinationsServices.getAllDestinations(), { initialValue: [] as Destination[] });
   isLoading = computed(() => this.allVoyages().length === 0);
 
   private params = toSignal(this.route.queryParams, { initialValue: {} as Params });
