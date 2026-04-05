@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, concat, last, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Voyage } from '../models/voyage.model';
 import { Review } from '../models/review.model';
+import { VoyagesResponse } from '../models/voyagesResponse.model';
 
 @Injectable({
   providedIn: 'root',
@@ -18,8 +19,8 @@ export class VoyagesServices {
   http = inject(HttpClient);
 
   getVoyagesPromoted(): Observable<Voyage[]> {
-    return this.http.get<Voyage[]>(`${this.BASE_URL}/voyages`).pipe(
-      map(voyages => voyages.filter(voyage => voyage.isPromoted === true)),
+    return this.http.get<{ data: Voyage[] }>(`${this.BASE_URL}/voyages/featured`).pipe(
+      map((response) => response.data),
       catchError((error) => {
         console.error('Error fetching promoted voyages:', error);
         return throwError(() => error);
@@ -27,8 +28,8 @@ export class VoyagesServices {
     );
   }
 
-  getVoyages(page: number = 1): Observable<Voyage[]> {
-    return this.http.get<Voyage[]>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
+  getVoyages(page: number = 1): Observable<VoyagesResponse> {
+    return this.http.get<VoyagesResponse>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
       catchError((error) => {
         console.error(`Error fetching voyages page ${page}:`, error);
         return throwError(() => error);
@@ -41,7 +42,7 @@ export class VoyagesServices {
 
     const fetchPage1 = this.getVoyages(1).pipe(
       map(voyages1 => {
-        allVoyages = allVoyages.concat(voyages1);
+        allVoyages = allVoyages.concat(voyages1.data);
         return allVoyages;
       }),
       catchError((error) => {
@@ -52,7 +53,7 @@ export class VoyagesServices {
 
     const fetchPage2 = this.getVoyages(2).pipe(
       map(voyages2 => {
-        allVoyages = allVoyages.concat(voyages2);
+        allVoyages = allVoyages.concat(voyages2.data);
         return allVoyages;
       }),
       catchError((error) => {
@@ -63,7 +64,7 @@ export class VoyagesServices {
 
     const fetchPage3 = this.getVoyages(3).pipe(
       map(voyages3 => {
-        allVoyages = allVoyages.concat(voyages3);
+        allVoyages = allVoyages.concat(voyages3.data);
         return allVoyages;
       }),
       catchError((error) => {
@@ -74,7 +75,7 @@ export class VoyagesServices {
 
     const fetchPage4 = this.getVoyages(4).pipe(
       map(voyages4 => {
-        allVoyages = allVoyages.concat(voyages4);
+        allVoyages = allVoyages.concat(voyages4.data);
         return allVoyages;
       }),
       catchError((error) => {
@@ -85,7 +86,7 @@ export class VoyagesServices {
 
     const fetchPage5 = this.getVoyages(5).pipe(
       map(voyages5 => {
-        allVoyages = allVoyages.concat(voyages5);
+        allVoyages = allVoyages.concat(voyages5.data);
         return allVoyages;
       }),
       catchError((error) => {
@@ -94,7 +95,10 @@ export class VoyagesServices {
       })
     );
 
-    return of(allVoyages);
+    return concat(fetchPage1, fetchPage2, fetchPage3, fetchPage4, fetchPage5).pipe(
+      last(),
+      map(() => allVoyages)
+    );
   }
 
   getVoyageById(id: string): Observable<Voyage> {
@@ -106,19 +110,11 @@ export class VoyagesServices {
     );
   }
 
-  getVoyageReviews(id: string): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.BASE_URL}/voyages/${id}/reviews`).pipe(
+  getVoyageCategories(): Observable<Voyage['category'][]> {
+    return this.http.get<{ data: Voyage['category'][] }>(`${this.BASE_URL}/voyages/categories`).pipe(
+      map((response) => response.data),
       catchError((error) => {
-        console.error('Error fetching voyage reviews:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  createVoyageReview(id: string, payload: Review): Observable<Review> {
-    return this.http.post<Review>(`${this.BASE_URL}/voyages/${id}/reviews`, payload).pipe(
-      catchError((error) => {
-        console.error('Error creating voyage review:', error);
+        console.error('Error fetching voyage categories:', error);
         return throwError(() => error);
       })
     );
