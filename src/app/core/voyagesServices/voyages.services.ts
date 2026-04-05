@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { catchError, concat, last, map, Observable, of, switchMap, tap, throwError } from 'rxjs';
+import { catchError, concat, last, map, Observable, throwError } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Voyage } from '../models/voyage.model';
