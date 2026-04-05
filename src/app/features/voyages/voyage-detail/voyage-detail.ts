@@ -29,23 +29,23 @@ export class VoyageDetail {
   
   reviewsReload = signal(0);
 
-  reviews = toSignal<ReviewsResponse | null>(
-    toObservable(this.reviewsReload).pipe(
-      switchMap(() => {
-        if (!this.voyageId) return of(null);
-        return this.voyagesServices.getVoyageReviews(this.voyageId);
-      })
-    ),
-    { initialValue: null }
-  );
+  // reviews = toSignal<ReviewsResponse | null>(
+  //   toObservable(this.reviewsReload).pipe(
+  //     switchMap(() => {
+  //       if (!this.voyageId) return of(null);
+  //       return this.voyagesServices.getVoyageReviews(this.voyageId);
+  //     })
+  //   ),
+  //   { initialValue: null }
+  // );
 
   ratingSteps: Array<1 | 2 | 3 | 4 | 5> = [1, 2, 3, 4, 5];
 
-  distributionPercent(star: 1 | 2 | 3 | 4 | 5): number {
-    const stats = this.reviews()?.stats;
-    if (!stats || stats.total === 0) return 0;
-    return Math.round((stats.distribution[star] / stats.total) * 100);
-  }
+  // distributionPercent(star: 1 | 2 | 3 | 4 | 5): number {
+  //   const stats = this.reviews()?.stats;
+  //   if (!stats || stats.total === 0) return 0;
+  //   return Math.round((stats.distribution[star] / stats.total) * 100);
+  // }
 
   message: string = '';
   messageType: 'success' | 'error' | '' = '';
@@ -89,42 +89,42 @@ export class VoyageDetail {
     });
   }
 
-  sendResult = toSignal(
-    toObservable(this.payloadToSend).pipe(
-      filter((payload): payload is { authorName: string; rating: number; title: string; comment: string } => payload !== null),
-      switchMap((payload) =>
-        this.voyagesServices.createVoyageReview(this.voyageId, payload).pipe(
-          map(() => ({ ok: true })),
-          catchError(() => of({ ok: false }))
-        )
-      )
-    ),
-    { initialValue: null  }
-  );
+  // sendResult = toSignal(
+  //   toObservable(this.payloadToSend).pipe(
+  //     filter((payload): payload is { authorName: string; rating: number; title: string; comment: string } => payload !== null),
+  //     switchMap((payload) =>
+  //       this.voyagesServices.createVoyageReview(this.voyageId, payload).pipe(
+  //         map(() => ({ ok: true })),
+  //         catchError(() => of({ ok: false }))
+  //       )
+  //     )
+  //   ),
+  //   { initialValue: null  }
+  // );
 
   
 
-  sendEffect = effect(() => {
-    const result = this.sendResult();
-    if (!result) return;
+  // sendEffect = effect(() => {
+  //   const result = this.sendResult();
+  //   if (!result) return;
 
-    if (result.ok) {
-      this.showMessage('success', 'Avis envoye avec succes');
-      this.reviewForm.reset({
-        authorName: 'Anonyme',
-        rating: null,
-        title: '',
-        comment: '',
-      });
+  //   if (result.ok) {
+  //     this.showMessage('success', 'Avis envoye avec succes');
+  //     this.reviewForm.reset({
+  //       authorName: 'Anonyme',
+  //       rating: null,
+  //       title: '',
+  //       comment: '',
+  //     });
 
-      this.reviewsReloadUpdate();
-    } else {
-      this.showMessage('error', "Erreur lors de l'envoi de l'avis");
-    }
+  //     this.reviewsReloadUpdate();
+  //   } else {
+  //     this.showMessage('error', "Erreur lors de l'envoi de l'avis");
+  //   }
 
-    this.payloadToSend.set(null);
-    this.isSubmitting = false;
-  });
+  //   this.payloadToSend.set(null);
+  //   this.isSubmitting = false;
+  // });
 
   showMessage(type: 'success' | 'error', text: string): void {
     this.messageType = type;
