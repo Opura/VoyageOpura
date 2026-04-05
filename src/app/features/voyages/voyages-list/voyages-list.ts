@@ -2,7 +2,7 @@ import { Component, signal, inject } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
+import { firstValueFrom, switchMap } from 'rxjs';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
@@ -27,12 +27,17 @@ export class VoyagesList {
   currentPage = signal(1);
   totalPages = 5;
 
-  voyages = toSignal(
-    toObservable(this.currentPage).pipe(
-      switchMap(page => this.voyagesServices.getVoyages(page))
-    ),
-    { initialValue: [] as Voyage[] }
-  );
+  voyages = signal<Voyage[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    await this.loadPage(this.currentPage());
+  }
+
+  async loadPage(page: number): Promise<void> {
+    const response = await firstValueFrom(this.voyagesServices.getVoyages(page));
+    this.voyages.set(response.data);
+    this.totalPages = response.meta.totalPages;
+  }
 
   visible = false;
   searchText = signal('');
