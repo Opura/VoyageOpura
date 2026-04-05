@@ -1,14 +1,15 @@
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { catchError, filter, map, of, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
+import { ReviewsServices } from '../../../core/reviewsServices/reviews.services';
 import { ReviewsResponse } from '../../../core/models/reviewsResponse.model';
+import { Voyage } from '../../../core/models/voyage.model';
 import { FavorisServices } from '../../../core/favorisServices/favoris.services';
 
 @Component({
@@ -19,125 +20,176 @@ import { FavorisServices } from '../../../core/favorisServices/favoris.services'
 })
 export class VoyageDetail {
   voyagesServices = inject(VoyagesServices);
-  route = inject(ActivatedRoute);
-  fb = inject(FormBuilder)
+  reviewsServices = inject(ReviewsServices);
   favorisService = inject(FavorisServices);
+  route = inject(ActivatedRoute);
+  fb = inject(FormBuilder);
 
   voyageId = this.route.snapshot.paramMap.get('id') || '';
 
-  voyage = toSignal(this.voyagesServices.getVoyageById(this.voyageId), { initialValue: null });
-  
-  reviewsReload = signal(0);
+  stars = [1, 2, 3, 4, 5];
 
-  reviews = toSignal<ReviewsResponse | null>(
-    toObservable(this.reviewsReload).pipe(
-      switchMap(() => {
-        if (!this.voyageId) return of(null);
-        return this.voyagesServices.getVoyageReviews(this.voyageId);
-      })
-    ),
-    { initialValue: null }
-  );
+  voyage = signal<Voyage | null>(null);
+  isVoyageLoading = signal<boolean>(true);
+  voyageError = signal<string>('');
 
-  ratingSteps: Array<1 | 2 | 3 | 4 | 5> = [1, 2, 3, 4, 5];
+  reviewsResponse = signal<ReviewsResponse | null>(null);
+  isReviewsLoading = signal<boolean>(true);
+  reviewsError = signal<string>('');
 
-  distributionPercent(star: 1 | 2 | 3 | 4 | 5): number {
-    const stats = this.reviews()?.stats;
-    if (!stats || stats.total === 0) return 0;
-    return Math.round((stats.distribution[star] / stats.total) * 100);
-  }
+  submittingReview = signal<boolean>(false);
+  currentImageIndex = signal<number>(0);
 
-  message: string = '';
-  messageType: 'success' | 'error' | '' = '';
+  toast = signal<{ type: 'success' | 'error'; message: string } | null>(null);
+  toastTimer: ReturnType<typeof setTimeout> | null = null;
 
-  reviewForm = this.fb.group({
-    authorName: ['Anonyme', [Validators.required, Validators.minLength(1)]],
-    rating: [null, [Validators.required, Validators.min(1), Validators.max(5)]],
+  reviewForm = this.fb.nonNullable.group({
+    authorName: ['', [Validators.required, Validators.minLength(1)]],
+    rating: [5, [Validators.required, Validators.min(1), Validators.max(5)]],
     title: ['', [Validators.required, Validators.minLength(1)]],
     comment: ['', [Validators.required, Validators.minLength(1)]],
   });
 
-  payloadToSend = signal<{
-    authorName: string;
-    rating: number;
-    title: string;
-    comment: string;
-  } | null>(null);
+  constructor() {
+    void this.loadVoyage();
+    void this.loadReviews();
+  }
 
-  isSubmitting = false;
+  async loadVoyage(): Promise<void> {
+    if (!this.voyageId) {
+      this.voyageError.set('Voyage introuvable.');
+      this.isVoyageLoading.set(false);
+      return;
+    }
 
-  submitReview(): void {
+    this.isVoyageLoading.set(true);
+    this.voyageError.set('');
+
+    try {
+      const voyageData = await firstValueFrom(this.voyagesServices.getVoyageById(this.voyageId));
+      this.voyage.set(voyageData);
+      this.currentImageIndex.set(0);
+    } catch {
+      this.voyageError.set('Impossible de charger les informations du voyage.');
+    } finally {
+      this.isVoyageLoading.set(false);
+    }
+  }
+
+  async loadReviews(): Promise<void> {
+    if (!this.voyageId) {
+      this.reviewsError.set('Voyage introuvable.');
+      this.isReviewsLoading.set(false);
+      return;
+    }
+
+    this.isReviewsLoading.set(true);
+    this.reviewsError.set('');
+
+    try {
+      const response = await firstValueFrom(this.reviewsServices.getVoyageReviews(this.voyageId));
+      this.reviewsResponse.set(response);
+    } catch {
+      this.reviewsError.set('Impossible de charger les avis.');
+    } finally {
+      this.isReviewsLoading.set(false);
+    }
+  }
+
+  images(): string[] {
+    return this.voyage()?.imageUrls ?? [];
+  }
+
+  previousImage(): void {
+    const images = this.images();
+    if (images.length === 0) return;
+    const previous =
+      this.currentImageIndex() === 0
+        ? images.length - 1
+        : this.currentImageIndex() - 1;
+    this.currentImageIndex.set(previous);
+  }
+
+  nextImage(): void {
+    const images = this.images();
+    if (images.length === 0) return;
+    const next =
+      this.currentImageIndex() === images.length - 1
+        ? 0
+        : this.currentImageIndex() + 1;
+    this.currentImageIndex.set(next);
+  }
+
+  goToImage(index: number): void {
+    this.currentImageIndex.set(index);
+  }
+
+  roundedRating(value: number): number {
+    return Math.round(value);
+  }
+
+  distributionRows(): Array<{ star: number; count: number }> {
+    const distribution = this.reviewsResponse()?.stats.distribution;
+    return this.stars.map((star) => ({
+      star,
+      count: distribution?.[star as 1 | 2 | 3 | 4 | 5] ?? 0,
+    }));
+  }
+
+  getDistributionWidth(count: number): string {
+    const maxCount = Math.max(...this.distributionRows().map((row) => row.count), 1);
+    const width = (count / maxCount) * 100;
+    return `${width}%`;
+  }
+
+  setRating(value: number): void {
+    this.reviewForm.controls.rating.setValue(value);
+    this.reviewForm.controls.rating.markAsTouched();
+  }
+
+  showFieldError(controlName: 'authorName' | 'rating' | 'title' | 'comment'): boolean {
+    const control = this.reviewForm.controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  async submitReview(): Promise<void> {
     if (this.reviewForm.invalid) {
       this.reviewForm.markAllAsTouched();
       return;
     }
 
-    if (this.isSubmitting) return;
-    if (!this.voyageId) {
-      this.showMessage('error', 'Id voyage introuvable');
-      return;
-    }
-    this.isSubmitting = true;
+    this.submittingReview.set(true);
 
-    const formValue = this.reviewForm.value;
+    const payload = this.reviewForm.getRawValue();
 
-    this.payloadToSend.set({
-      authorName: formValue.authorName || 'Anonyme',
-      rating: formValue.rating || 1,
-      title: formValue.title || '',
-      comment: formValue.comment || '',
-    });
-  }
-
-  sendResult = toSignal(
-    toObservable(this.payloadToSend).pipe(
-      filter((payload): payload is { authorName: string; rating: number; title: string; comment: string } => payload !== null),
-      switchMap((payload) =>
-        this.voyagesServices.createVoyageReview(this.voyageId, payload).pipe(
-          map(() => ({ ok: true })),
-          catchError(() => of({ ok: false }))
-        )
-      )
-    ),
-    { initialValue: null  }
-  );
-
-  
-
-  sendEffect = effect(() => {
-    const result = this.sendResult();
-    if (!result) return;
-
-    if (result.ok) {
-      this.showMessage('success', 'Avis envoye avec succes');
+    try {
+      await firstValueFrom(this.reviewsServices.createVoyageReview(this.voyageId, payload));
+      this.showToast('Avis publié avec succès.', 'success');
       this.reviewForm.reset({
-        authorName: 'Anonyme',
-        rating: null,
+        authorName: '',
+        rating: 5,
         title: '',
         comment: '',
       });
-
-      this.reviewsReloadUpdate();
-    } else {
-      this.showMessage('error', "Erreur lors de l'envoi de l'avis");
+      await this.loadReviews();
+    } catch {
+      this.showToast("Erreur lors de l'envoi de l'avis.", 'error');
+    } finally {
+      this.submittingReview.set(false);
     }
-
-    this.payloadToSend.set(null);
-    this.isSubmitting = false;
-  });
-
-  showMessage(type: 'success' | 'error', text: string): void {
-    this.messageType = type;
-    this.message = text;
-
-    setTimeout(() => {
-      this.message = '';
-      this.messageType = '';
-    }, 3000);
   }
 
-  reviewsReloadUpdate(): void {
-    this.reviewsReload.update(v => v + 1);
+  showToast(message: string, type: 'success' | 'error'): void {
+    this.toast.set({ message, type });
+
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+
+    this.toastTimer = setTimeout(() => {
+      this.toast.set(null);
+      this.toastTimer = null;
+    }, 3500);
   }
 
   toggleFavorite(id: string): void {

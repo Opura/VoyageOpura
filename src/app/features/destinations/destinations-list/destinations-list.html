@@ -9,6 +9,41 @@
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Catalogue des destinations</h1>
         <p class="text-lg md:text-2xl mb-8">Choisissez une destination pour voir ses détails</p>
 
+        <form [formGroup]="filtersForm" class="w-full max-w-3xl mb-8 rounded-2xl bg-white/90 shadow p-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Continent</label>
+                    <select class="w-full rounded-lg border border-slate-300 px-3 py-2" formControlName="continent">
+                        <option value="">Tous</option>
+                        @for (continent of continents(); track continent) {
+                            <option [value]="continent">{{ continent }}</option>
+                        }
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-1">Climat</label>
+                    <select class="w-full rounded-lg border border-slate-300 px-3 py-2" formControlName="climate">
+                        <option value="">Tous</option>
+                        <option value="tropical">Tropical</option>
+                        <option value="temperate">Tempéré</option>
+                        <option value="arid">Aride</option>
+                        <option value="polar">Polaire</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button
+                        type="button"
+                        (click)="resetFilters()"
+                        class="w-full rounded-full bg-[#181a24] text-[#ffe066] px-4 py-2 font-semibold hover:bg-[#2a2d3d] transition-colors"
+                    >
+                        Réinitialiser
+                    </button>
+                </div>
+            </div>
+        </form>
+
         @if (destinations().length > 0) {
         <div class="container mx-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

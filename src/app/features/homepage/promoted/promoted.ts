@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 
@@ -10,19 +10,25 @@ import { VoyagesServices } from '../../../core/voyagesServices/voyages.services'
 import { Voyage } from '../../../core/models/voyage.model';
 import { FavorisServices } from '../../../core/favorisServices/favoris.services';
 
+interface ResponsiveOption {
+  breakpoint: string;
+  numVisible: number;
+  numScroll: number;
+}
+
 @Component({
   selector: 'app-promoted',
   imports: [ButtonModule, CarouselModule, TagModule, RouterLink],
   templateUrl: './promoted.html',
   styleUrl: './promoted.css',
 })
-export class Promoted {
+export class Promoted implements OnInit {
   voyagesServices = inject(VoyagesServices);
   favorisService = inject(FavorisServices);
 
-  voyagesPromoted= toSignal(this.voyagesServices.getVoyagesPromoted(), { initialValue: [] as Voyage[] });
+  voyagesPromoted = toSignal(this.voyagesServices.getVoyagesFeatured(), { initialValue: [] as Voyage[] });
 
-  responsiveOptions: any[] | undefined;
+  responsiveOptions: ResponsiveOption[] = [];
 
   ngOnInit() {
     this.responsiveOptions = [

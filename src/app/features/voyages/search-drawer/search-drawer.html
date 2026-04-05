@@ -1,0 +1,98 @@
+<p-drawer 
+    [(visible)]="visible"
+    (visibleChange)="visibleChange.emit($event)"
+    [modal]="false"
+    appendTo="body"
+    styleClass="!z-200 bg-white/90 border-none shadow-lg p-4 w-full max-w-md">
+    <form class="space-y-6" [formGroup]="filtersForm" (ngSubmit)="submit()">
+        <div>
+            <label class="block font-semibold mb-1">Recherche</label>
+            <input 
+                class="p-inputtext w-full border rounded px-2 py-1" 
+                placeholder="Titre, destination, activité..." formControlName="q">
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Catégorie</label>
+            <select class="p-inputtext w-full border rounded px-2 py-1" formControlName="category">
+                <option value="">Toutes</option>
+                @for (category of categories(); track category) {
+                    <option [value]="category">{{ category }}</option>
+                }
+            </select>
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Continent</label>
+            <select class="p-inputtext w-full border rounded px-2 py-1" formControlName="continent">
+                <option value="">Tous</option>
+                @for (continent of continents(); track continent) {
+                    <option [value]="continent">{{ continent }}</option>
+                }
+            </select>
+        </div>
+        <div class="flex space-x-2">
+            <div class="flex-1">
+                <label class="block font-semibold mb-1">Prix min</label>
+                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" formControlName="minPrice" min="0">
+            </div>
+            <div class="flex-1">
+                <label class="block font-semibold mb-1">Prix max</label>
+                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" formControlName="maxPrice" min="0">
+            </div>
+        </div>
+        <div class="flex space-x-2">
+            <div class="flex-1">
+                <label class="block font-semibold mb-1">Durée min (jours)</label>
+                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" formControlName="minDuration" min="1">
+            </div>
+            <div class="flex-1">
+                <label class="block font-semibold mb-1">Durée max (jours)</label>
+                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" formControlName="maxDuration" min="1">
+            </div>
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Date de départ (à partir de)</label>
+            <input type="date" class="p-inputtext w-full border rounded px-2 py-1" formControlName="departureFrom">
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Date de départ (jusqu'à)</label>
+            <input type="date" class="p-inputtext w-full border rounded px-2 py-1" formControlName="departureTo">
+        </div>
+        <div>
+            <label class="inline-flex items-center">
+                <input type="checkbox" class="p-checkbox" formControlName="availableOnly">
+                <span class="ml-2">Disponibles uniquement</span>
+            </label>
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Difficulté</label>
+            <select class="p-inputtext w-full border rounded px-2 py-1" formControlName="difficultyLevel">
+                <option value="">Toutes</option>
+                <option value="easy">Facile</option>
+                <option value="medium">Moyenne</option>
+                <option value="hard">Difficile</option>
+            </select>
+        </div>
+        <div>
+            <label class="block font-semibold mb-1">Trier par</label>
+            <select class="p-inputtext w-full border rounded px-2 py-1" formControlName="sortBy">
+                <option value="price_asc">Prix croissant</option>
+                <option value="price_desc">Prix décroissant</option>
+                <option value="rating_desc">Meilleures notes</option>
+                <option value="duration_asc">Durée (plus courte en premier)</option>
+                <option value="departure_asc">Départ le plus proche</option>
+                <option value="popularity">Popularité</option>
+            </select>
+        </div>
+        <div class="flex justify-between gap-2">
+            <button 
+                pButton type="button"
+                (click)="reset()"
+                label="Réinitialiser"
+                class="bg-gray-200 text-[#181a24] font-semibold px-6 py-2 rounded-full"></button>
+            <button 
+                pButton type="submit"
+                label="Appliquer"
+                class="bg-[#181a24] text-[#ffe066] hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300 font-semibold px-6 py-2 rounded-full"></button>
+        </div>
+    </form>
+</p-drawer>

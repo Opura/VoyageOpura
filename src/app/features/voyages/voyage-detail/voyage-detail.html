@@ -1,282 +1,328 @@
 <app-header></app-header>
 
 <section class="relative text-[#181a24] min-h-screen">
-    <div class="absolute inset-0 overflow-hidden">
-        <img src="../../../../assets/Voyages.jpg" alt="Many traveling items" class="w-full h-full object-cover object-center opacity-35 fixed">
-    </div>
-    <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
-        <h1 class="text-4xl font-bold mb-6">Détails du voyage</h1>
-        <p class="text-lg mb-4">Découvrez les détails de ce voyage passionnant</p>
-        <div class="w-full flex flex-col items-center">
-            @if (voyage(); as v) {
-                <div class="w-full max-w-6xl mt-8 flex gap-4">
-                    @for (img of v.imageUrls; track $index) {
-                    <div class="overflow-hidden rounded-2xl shadow-lg">
-                        <img
-                        [src]="img"
-                        [alt]="'Image du voyage ' + ($index + 1)"
-                        class="w-full h-56 object-cover"
-                        />
-                    </div>
-                    }
-                </div>
+	<div class="absolute inset-0 overflow-hidden">
+		<img
+			src="../../../../assets/Voyages.jpg"
+			alt="Voyage detail"
+			class="w-full h-full object-cover object-center opacity-35 fixed"
+		/>
+	</div>
 
-                <div class="w-full max-w-6xl mt-6 rounded-2xl bg-white/85 backdrop-blur px-6 py-5 shadow-lg">
-                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900">
-                            {{ v.title }}
-                        </h2>
-                        <span class="inline-flex w-fit items-center rounded-full bg-sky-100 px-3 py-1 text-sm font-semibold text-sky-800">
-                            {{ v.category }}
-                        </span>
-                        <button
-                            type="button"
-                            (click)="toggleFavorite(v.id)"
-                            class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow hover:bg-slate-100"
-                            aria-label="Ajouter ou retirer des favoris"
-                        >
-                            {{ isFavorite(v.id) ? '♥' : '♡' }}
-                        </button>
-                    </div>
+	<div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
+		@if (toast(); as t) {
+			<div
+				class="fixed top-24 right-4 z-50 rounded-xl px-4 py-3 shadow-lg text-white"
+				[class.bg-emerald-600]="t.type === 'success'"
+				[class.bg-red-600]="t.type === 'error'"
+			>
+				{{ t.message }}
+			</div>
+		}
 
-                    <div class="mt-3 flex flex-wrap items-center gap-3 text-sm sm:text-base">
-                        <a
-                            [routerLink]="['/destinations', v.destinationId]"
-                            class="font-semibold text-blue-700 hover:text-blue-900 hover:underline"
-                        >
-                            {{ v.destination.name || 'Voir la destination' }}
-                        </a>
-                        <span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
-                        <span class="inline-flex items-center rounded-full bg-amber-100 px-3 py-1 font-medium text-amber-800">
-                            Niveau: {{ v.difficultyLevel }}
-                        </span>
-                    </div>
-                </div>
+		@if (isVoyageLoading()) {
+			<div class="w-full max-w-6xl rounded-2xl bg-white/90 backdrop-blur shadow-lg p-8 text-center">
+				Chargement du voyage...
+			</div>
+		} @else if (voyageError()) {
+			<div class="w-full max-w-6xl rounded-2xl bg-white/90 backdrop-blur shadow-lg p-8 text-center text-red-700">
+				{{ voyageError() }}
+			</div>
+		} @else if (voyage(); as v) {
+			<article class="w-full max-w-6xl rounded-2xl bg-white/90 backdrop-blur shadow-lg overflow-hidden">
+				<section class="p-6 border-b border-slate-200">
+					<div class="flex items-start justify-between gap-3">
+						<h1 class="text-3xl md:text-4xl font-bold">{{ v.title }}</h1>
+						<button
+							type="button"
+							(click)="toggleFavorite(v.id)"
+							class="rounded-full bg-white/90 px-3 py-2 text-xl shadow hover:bg-slate-100"
+							aria-label="Ajouter ou retirer des favoris"
+						>
+							{{ isFavorite(v.id) ? '♥' : '♡' }}
+						</button>
+					</div>
+					<div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+						<a
+							[routerLink]="['/destinations', v.destinationId]"
+							class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 hover:bg-sky-200 transition-colors"
+						>
+							{{ v.destination.name || 'Destination' }}
+						</a>
+						<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800">{{ v.category }}</span>
+						<span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800">{{ v.difficultyLevel }}</span>
+					</div>
+					<p class="mt-4 text-slate-800">{{ v.description }}</p>
+				</section>
 
-                <div class="w-full max-w-6xl mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Durée</p>
-                        <p class="mt-2 text-2xl font-extrabold text-slate-900">{{ v.duration }} jours</p>
-                    </div>
+				<section class="p-6 border-b border-slate-200">
+					<h2 class="text-2xl font-bold mb-4">Galerie d'images</h2>
+					@if (isVoyageLoading()) {
+						<div class="rounded-xl bg-slate-100 p-6 text-slate-600">Chargement des images...</div>
+					} @else if (images().length === 0) {
+						<div class="rounded-xl bg-slate-100 p-6 text-slate-600">Aucune image disponible pour ce voyage.</div>
+					} @else {
+						<div class="space-y-4">
+							<div class="relative rounded-xl overflow-hidden bg-slate-100">
+								<img
+									[src]="images()[currentImageIndex()]"
+									[alt]="v.title"
+									class="w-full h-80 md:h-96 object-cover"
+								/>
+								<button
+									type="button"
+									class="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-2 font-bold"
+									(click)="previousImage()"
+									aria-label="Image précédente"
+								>
+									‹
+								</button>
+								<button
+									type="button"
+									class="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-white/90 px-3 py-2 font-bold"
+									(click)="nextImage()"
+									aria-label="Image suivante"
+								>
+									›
+								</button>
+							</div>
 
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Prix</p>
-                        <p class="mt-2 text-2xl font-extrabold text-slate-900">{{ v.price }} €</p>
-                    </div>
+							<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+								@for (image of images(); track image; let i = $index) {
+									<button
+										type="button"
+										class="rounded-lg overflow-hidden border-2 transition-colors"
+										[class.border-sky-500]="i === currentImageIndex()"
+										[class.border-transparent]="i !== currentImageIndex()"
+										(click)="goToImage(i)"
+									>
+										<img [src]="image" [alt]="v.title + ' image ' + (i + 1)" class="w-full h-20 object-cover" />
+									</button>
+								}
+							</div>
+						</div>
+					}
+				</section>
 
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Places</p>
-                        <p class="mt-2 text-2xl font-extrabold text-slate-900">
-                        {{ v.availableSeats }} / {{ v.totalSeats }}
-                        </p>
-                    </div>
+				<section class="p-6 border-b border-slate-200">
+					<h2 class="text-2xl font-bold mb-4">Informations clés</h2>
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Durée</p>
+							<p class="font-semibold">{{ v.duration }} jours</p>
+						</div>
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Prix</p>
+							<p class="font-semibold">{{ v.price }} €</p>
+						</div>
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Places disponibles</p>
+							<p class="font-semibold">{{ v.availableSeats }} / {{ v.totalSeats }}</p>
+						</div>
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Départ</p>
+							<p class="font-semibold">{{ v.departureDate | date: 'dd/MM/yyyy' }}</p>
+						</div>
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Retour</p>
+							<p class="font-semibold">{{ v.returnDate | date: 'dd/MM/yyyy' }}</p>
+						</div>
+						<div class="rounded-xl bg-slate-50 p-4">
+							<p class="text-sm text-slate-500">Note moyenne</p>
+							<div class="flex items-center gap-2">
+								<div class="flex text-amber-500">
+									@for (star of stars; track star) {
+										<span>{{ star <= roundedRating(v.averageRating) ? '★' : '☆' }}</span>
+									}
+								</div>
+								<p class="font-semibold">{{ v.averageRating.toFixed(1) }}/5</p>
+							</div>
+						</div>
+					</div>
+				</section>
 
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Départ</p>
-                        <p class="mt-2 text-xl font-bold text-slate-900">{{ v.departureDate | date:'dd/MM/yyyy' }}</p>
-                    </div>
+				<section class="p-6 border-b border-slate-200">
+					<h2 class="text-2xl font-bold mb-4">Points forts</h2>
+					@if (v.highlights.length > 0) {
+						<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+							@for (highlight of v.highlights; track highlight) {
+								<div class="rounded-xl bg-amber-50 border border-amber-200 p-4">✨ {{ highlight }}</div>
+							}
+						</div>
+					} @else {
+						<p class="text-slate-600">Aucun point fort renseigné.</p>
+					}
+				</section>
 
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Retour</p>
-                        <p class="mt-2 text-xl font-bold text-slate-900">{{ v.returnDate | date:'dd/MM/yyyy' }}</p>
-                    </div>
+				<section class="p-6 border-b border-slate-200">
+					<h2 class="text-2xl font-bold mb-4">Inclus / Exclus</h2>
+					<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+						<div>
+							<h3 class="font-bold mb-3 text-emerald-800">Ce qui est inclus</h3>
+							@if (v.included.length > 0) {
+								<ul class="space-y-2">
+									@for (item of v.included; track item) {
+										<li class="rounded-lg bg-emerald-50 p-3">✅ {{ item }}</li>
+									}
+								</ul>
+							} @else {
+								<p class="text-slate-600">Aucun élément inclus renseigné.</p>
+							}
+						</div>
 
-                    <div class="rounded-2xl bg-white/85 backdrop-blur shadow-lg p-5">
-                        <p class="text-xs uppercase tracking-wide text-slate-500">Note moyenne</p>
-                        <div class="mt-2 flex items-center gap-1">
-                        @for (star of [1,2,3,4,5]; track star) {
-                            <span class="text-2xl" [class.text-amber-400]="star <= v.averageRating" [class.text-slate-300]="star > v.averageRating">★</span>
-                        }
-                        <span class="ml-2 text-sm font-semibold text-slate-700">{{ v.averageRating }}/5</span>
-                        </div>
-                    </div>
-                </div>
+						<div>
+							<h3 class="font-bold mb-3 text-red-800">Ce qui est exclu</h3>
+							@if (v.excluded.length > 0) {
+								<ul class="space-y-2">
+									@for (item of v.excluded; track item) {
+										<li class="rounded-lg bg-red-50 p-3">❌ {{ item }}</li>
+									}
+								</ul>
+							} @else {
+								<p class="text-slate-600">Aucun élément exclu renseigné.</p>
+							}
+						</div>
+					</div>
+				</section>
 
-                <div>
-                    <ul class="mt-4 flex gap-4">
-                    @for (highlight of v.highlights; track $index) {
-                        <li class="flex items-start gap-3 rounded-xl bg-slate-50/90 border border-slate-200 p-3">
-                        <span class="mt-1 inline-block h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                        <span class="text-slate-800 leading-relaxed">{{ highlight }}</span>
-                        </li>
-                    }
-                    </ul>
-                </div>
+				<section class="p-6 space-y-8">
+					<div>
+						<h2 class="text-2xl font-bold mb-4">Avis clients</h2>
 
-                <div class="flex gap-4">
-                    <ul class="mt-4 space-y-3 w-1/2">
-                        @for (item of v.included; track $index) {
-                        <li class="flex items-start gap-3 rounded-xl bg-emerald-50 border border-emerald-200 p-3">
-                            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-white text-sm font-bold">✓</span>
-                            <span class="text-slate-800 leading-relaxed">{{ item }}</span>
-                        </li>
-                        }
-                    </ul>
+						@if (isReviewsLoading()) {
+							<div class="rounded-xl bg-slate-100 p-6 text-slate-600">Chargement des avis...</div>
+						} @else if (reviewsError()) {
+							<div class="rounded-xl bg-red-50 text-red-700 p-6">{{ reviewsError() }}</div>
+						} @else {
+							@if (reviewsResponse(); as reviewsData) {
+								<div class="rounded-xl bg-slate-50 p-5 border border-slate-200">
+									<div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+										<div>
+											<p class="text-sm text-slate-500">Note moyenne</p>
+											<p class="text-3xl font-bold">{{ reviewsData.stats.averageRating.toFixed(1) }}/5</p>
+											<div class="flex text-amber-500 mt-1">
+												@for (star of stars; track star) {
+													<span>{{ star <= roundedRating(reviewsData.stats.averageRating) ? '★' : '☆' }}</span>
+												}
+											</div>
+											<p class="text-sm text-slate-600 mt-2">{{ reviewsData.stats.total }} avis</p>
+										</div>
 
-                    <ul class="mt-4 space-y-3 w-1/2">
-                        @for (item of v.excluded; track $index) {
-                        <li class="flex items-start gap-3 rounded-xl bg-rose-50 border border-rose-200 p-3">
-                            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-rose-600 text-white text-sm font-bold">✕</span>
-                            <span class="text-slate-800 leading-relaxed">{{ item }}</span>
-                        </li>
-                        }
-                    </ul>
-                </div>
+										<div class="md:col-span-2 space-y-2">
+											@for (row of distributionRows(); track row.star) {
+												<div class="flex items-center gap-3">
+													<span class="w-14 text-sm">{{ row.star }} étoile{{ row.star > 1 ? 's' : '' }}</span>
+													<div class="h-3 flex-1 rounded-full bg-slate-200 overflow-hidden">
+														<div class="h-full bg-amber-500" [style.width]="getDistributionWidth(row.count)"></div>
+													</div>
+													<span class="w-10 text-right text-sm font-semibold">{{ row.count }}</span>
+												</div>
+											}
+										</div>
+									</div>
+								</div>
 
-                <div>
-                    <div class="w-full max-w-6xl mt-6 rounded-2xl bg-white/85 backdrop-blur shadow-lg p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Statistiques des avis</h3>
+								<div class="mt-6 space-y-4">
+									@if (reviewsData.reviews.length === 0) {
+										<p class="text-slate-600">Aucun avis pour le moment.</p>
+									} @else {
+										@for (review of reviewsData.reviews; track review.id) {
+											<article class="rounded-xl border border-slate-200 p-4 bg-white">
+												<div class="flex flex-wrap justify-between gap-2">
+													<p class="font-semibold">{{ review.authorName }}</p>
+													<p class="text-sm text-slate-500">{{ review.createdAt | date: 'dd/MM/yyyy' }}</p>
+												</div>
+												<div class="flex text-amber-500 mt-2">
+													@for (star of stars; track star) {
+														<span>{{ star <= review.rating ? '★' : '☆' }}</span>
+													}
+												</div>
+												<h3 class="mt-2 font-bold">{{ review.title }}</h3>
+												<p class="mt-1 text-slate-700">{{ review.comment }}</p>
+											</article>
+										}
+									}
+								</div>
+							}
+						}
+					</div>
 
-                        <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                <p class="text-xs uppercase tracking-wide text-slate-500">Note moyenne</p>
-                                <p class="mt-2 text-3xl font-extrabold text-slate-900">
-                                    {{ reviews()?.stats?.averageRating ?? 0 }}/5
-                                </p>
-                            </div>
+					<div class="rounded-xl bg-white border border-slate-200 p-5">
+						<h3 class="text-xl font-bold mb-4">Ajouter un avis (anonyme)</h3>
 
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                <p class="text-xs uppercase tracking-wide text-slate-500">Nombre total d'avis</p>
-                                <p class="mt-2 text-3xl font-extrabold text-slate-900">
-                                    {{ reviews()?.stats?.total ?? 0 }}
-                                </p>
-                            </div>
+						<form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
+							<div>
+								<label for="authorName" class="block text-sm font-medium mb-1">Nom</label>
+								<input
+									id="authorName"
+									type="text"
+									formControlName="authorName"
+									class="w-full rounded-lg border border-slate-300 px-3 py-2"
+								/>
+								@if (showFieldError('authorName')) {
+									<p class="text-sm text-red-600 mt-1">Le nom est requis.</p>
+								}
+							</div>
 
-                            <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                                <p class="text-xs uppercase tracking-wide text-slate-500 mb-3">Distribution (1 → 5)</p>
+							<div>
+								<p class="block text-sm font-medium mb-1">Note</p>
+								<div class="flex gap-2 text-2xl">
+									@for (star of stars; track star) {
+										<button
+											type="button"
+											(click)="setRating(star)"
+											class="leading-none"
+											[class.text-amber-500]="star <= (reviewForm.controls.rating.value || 0)"
+											[class.text-slate-300]="star > (reviewForm.controls.rating.value || 0)"
+											aria-label="Noter {{ star }} sur 5"
+										>
+											★
+										</button>
+									}
+								</div>
+								@if (showFieldError('rating')) {
+									<p class="text-sm text-red-600 mt-1">La note doit être comprise entre 1 et 5.</p>
+								}
+							</div>
 
-                                @for (star of ratingSteps; track star) {
-                                    <div class="flex items-center gap-3 mb-2">
-                                        <span class="w-8 text-sm font-semibold text-slate-700">{{ star }}★</span>
+							<div>
+								<label for="title" class="block text-sm font-medium mb-1">Titre</label>
+								<input
+									id="title"
+									type="text"
+									formControlName="title"
+									class="w-full rounded-lg border border-slate-300 px-3 py-2"
+								/>
+								@if (showFieldError('title')) {
+									<p class="text-sm text-red-600 mt-1">Le titre est requis.</p>
+								}
+							</div>
 
-                                        <div class="flex-1 h-2.5 rounded-full bg-slate-200 overflow-hidden">
-                                            <div
-                                            class="h-full bg-amber-400"
-                                            [style.width.%]="distributionPercent(star)"
-                                            ></div>
-                                        </div>
+							<div>
+								<label for="comment" class="block text-sm font-medium mb-1">Commentaire</label>
+								<textarea
+									id="comment"
+									formControlName="comment"
+									class="w-full min-h-28 rounded-lg border border-slate-300 px-3 py-2"
+								></textarea>
+								@if (showFieldError('comment')) {
+									<p class="text-sm text-red-600 mt-1">Le commentaire est requis.</p>
+								}
+							</div>
 
-                                        <span class="w-8 text-right text-xs text-slate-600">
-                                            {{ reviews()?.stats?.distribution?.[star] ?? 0 }}
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="w-full max-w-6xl mt-6 rounded-2xl bg-white/85 backdrop-blur shadow-lg p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Avis clients</h3>
-
-                        @if (reviews()?.reviews?.length) {
-                            <div class="mt-4 space-y-4">
-                            @for (review of reviews()!.reviews; track review.id) {
-                                <article class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                                <div class="flex flex-wrap items-center justify-between gap-2">
-                                    <p class="font-semibold text-slate-900">{{ review.authorName }}</p>
-                                    <p class="text-sm text-slate-500">{{ review.createdAt | date:'dd/MM/yyyy' }}</p>
-                                </div>
-
-                                <div class="mt-2 flex items-center gap-1">
-                                    @for (star of [1,2,3,4,5]; track star) {
-                                    <span
-                                        class="text-xl"
-                                        [class.text-amber-400]="star <= review.rating"
-                                        [class.text-slate-300]="star > review.rating"
-                                    >★</span>
-                                    }
-                                </div>
-
-                                <h4 class="mt-2 font-bold text-slate-900">{{ review.title }}</h4>
-                                <p class="mt-1 text-slate-700">{{ review.comment }}</p>
-                                </article>
-                            }
-                            </div>
-                        } @else {
-                            <p class="mt-3 text-slate-600">Aucun avis pour le moment.</p>
-                        }
-                    </div>
-                    <div class="w-full max-w-6xl mt-6 rounded-2xl bg-white/85 backdrop-blur shadow-lg p-6">
-                        <h3 class="text-xl sm:text-2xl font-bold text-slate-900">Ajouter un avis</h3>
-
-                        <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="mt-4 space-y-4">
-                            <div>
-                                <label for="authorName" class="block text-sm font-medium text-slate-700">Nom</label>
-                                <input
-                                    id="authorName"
-                                    type="text"
-                                    formControlName="authorName"
-                                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                                    placeholder="Ex: Anonyme"
-                                />
-                            </div>
-
-                            <div>
-                                <label for="rating" class="block text-sm font-medium text-slate-700">Note</label>
-                                <select
-                                    id="rating"
-                                    formControlName="rating"
-                                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                                >
-                                    <option [ngValue]="null">Choisir une note</option>
-                                    @for (star of ratingSteps; track star) {
-                                    <option [ngValue]="star">{{ star }} / 5</option>
-                                    }
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-slate-700">Titre</label>
-                                <input
-                                    id="title"
-                                    type="text"
-                                    formControlName="title"
-                                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                                    placeholder="Titre de votre avis"
-                                />
-                            </div>
-
-                            <div>
-                                <label for="comment" class="block text-sm font-medium text-slate-700">Commentaire</label>
-                                <textarea
-                                    id="comment"
-                                    rows="4"
-                                    formControlName="comment"
-                                    class="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2"
-                                    placeholder="Votre commentaire..."
-                                ></textarea>
-                            </div>
-
-                            <button
-                                type="submit"
-                                class="rounded-lg bg-slate-900 px-4 py-2 font-semibold text-white hover:bg-slate-800 disabled:opacity-50"
-                                [disabled]="reviewForm.invalid || isSubmitting"
-                                >
-                                {{ isSubmitting ? 'Envoi...' : 'Valider' }}
-                            </button>
-                            
-                            @if (message) {
-                                <p
-                                    class="mt-3 text-sm font-medium"
-                                    [class.text-emerald-600]="messageType === 'success'"
-                                    [class.text-rose-600]="messageType === 'error'"
-                                >
-                                    {{ message }}
-                                </p>
-                            }
-                        </form>
-                    </div>
-                </div>
-
-                
-                } @else {
-                <p class="mt-8 text-base">Chargement des informations...</p>
-                
-            }
-        </div>
-    </div>
+							<button
+								type="submit"
+								class="rounded-full bg-[#181a24] text-white px-5 py-2 hover:bg-slate-800 disabled:opacity-60"
+								[disabled]="submittingReview()"
+							>
+								{{ submittingReview() ? 'Envoi en cours...' : 'Publier mon avis' }}
+							</button>
+						</form>
+					</div>
+				</section>
+			</article>
+		}
+	</div>
 </section>
 
 <app-footer class="relative"></app-footer>

@@ -6,48 +6,133 @@
     </div>
 
     <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
-        @if (destination(); as d) {
-        <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg overflow-hidden">
-            <img [src]="d.imageUrl" [alt]="d.name" class="w-full h-80 object-cover" />
+        @if (destinationError()) {
+            <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg p-8 text-center text-red-700">
+                {{ destinationError() }}
+            </div>
+        } @else if (destination(); as d) {
+            <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg overflow-hidden">
+                <img [src]="d.imageUrl" [alt]="d.name" class="w-full h-80 object-cover" />
 
-            <div class="p-6">
-            <h1 class="text-3xl md:text-4xl font-bold">{{ d.name }}</h1>
-            <p class="mt-2 text-slate-700">{{ d.country }} - {{ d.continent }}</p>
+                <div class="p-6">
+                    <h1 class="text-3xl md:text-4xl font-bold">{{ d.name }}</h1>
+                    <p class="mt-2 text-slate-700">{{ d.country }} - {{ d.continent }}</p>
 
-            <p class="mt-4 text-slate-800">{{ d.description }}</p>
+                    <p class="mt-4 text-slate-800">{{ d.description }}</p>
 
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="rounded-xl bg-slate-50 p-4">
-                <p class="text-sm text-slate-500">Climat</p>
-                <p class="font-semibold">{{ d.climate }}</p>
-                </div>
-                <div class="rounded-xl bg-slate-50 p-4">
-                <p class="text-sm text-slate-500">Note moyenne</p>
-                <p class="font-semibold">{{ d.averageRating }}/5</p>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="rounded-xl bg-slate-50 p-4">
+                            <p class="text-sm text-slate-500">Climat</p>
+                            <p class="font-semibold">{{ d.climate }}</p>
+                        </div>
+                        <div class="rounded-xl bg-slate-50 p-4">
+                            <p class="text-sm text-slate-500">Note moyenne</p>
+                            <p class="font-semibold">{{ d.averageRating }}/5</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h2 class="font-bold mb-2">Meilleures saisons</h2>
+                        <div class="flex flex-wrap gap-2">
+                            @for (season of d.bestSeasons; track season) {
+                                <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm">{{ season }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <h2 class="font-bold mb-2">Tags</h2>
+                        <div class="flex flex-wrap gap-2">
+                            @for (tag of d.tags; track tag) {
+                                <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-sm">{{ tag }}</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+                        <h2 class="text-2xl font-bold mb-4">Carte interactive</h2>
+                        <div #destinationMap class="destination-map rounded-xl border border-slate-200"></div>
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="flex items-center justify-between gap-3 mb-4">
+                            <h2 class="text-2xl font-bold">Hôtels</h2>
+                            <span class="text-sm text-slate-600">{{ d.hotels.length }} résultat(s)</span>
+                        </div>
+
+                        @if (d.hotels.length > 0) {
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @for (hotel of d.hotels; track hotel.id) {
+                                    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                                        <img [src]="hotel.imageUrl" [alt]="hotel.name" class="w-full h-48 object-cover" />
+
+                                        <div class="p-4 space-y-2">
+                                            <h3 class="text-lg font-bold">{{ hotel.name }}</h3>
+                                            <p class="text-amber-600 text-sm">{{ getHotelStars(hotel.stars) }}</p>
+                                            <p class="text-sm text-slate-700">{{ hotel.pricePerNight }}€/nuit</p>
+                                            <p class="text-sm text-slate-700">{{ hotel.description }}</p>
+
+                                            <div class="flex flex-wrap gap-1">
+                                                @for (amenity of hotel.amenities; track amenity) {
+                                                    <span class="px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-700">
+                                                        {{ amenity }}
+                                                    </span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </article>
+                                }
+                            </div>
+                        } @else {
+                            <p class="text-slate-700">Aucun hôtel n'est disponible pour cette destination.</p>
+                        }
+                    </div>
+
+                    <div class="mt-8">
+                        <div class="flex items-center justify-between gap-3 mb-4">
+                            <h2 class="text-2xl font-bold">Activités</h2>
+                            <span class="text-sm text-slate-600">{{ d.activities.length }} résultat(s)</span>
+                        </div>
+
+                        @if (d.activities.length > 0) {
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                @for (activity of d.activities; track activity.id) {
+                                    <article class="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-sm">
+                                        <img [src]="activity.imageUrl" [alt]="activity.name" class="w-full h-48 object-cover" />
+
+                                        <div class="p-4 space-y-2">
+                                            <h3 class="text-lg font-bold">{{ activity.name }}</h3>
+                                            <p class="text-sm text-slate-700">
+                                                {{ activity.category }} - {{ activity.duration }}h - {{ activity.price }}€
+                                            </p>
+                                            <p class="text-sm text-slate-700">{{ activity.description }}</p>
+                                            <p class="text-xs text-slate-500">
+                                                Participants: {{ activity.minParticipants }} à {{ activity.maxParticipants }}
+                                            </p>
+                                        </div>
+                                    </article>
+                                }
+                            </div>
+                        } @else {
+                            <p class="text-slate-700">Aucune activité n'est disponible pour cette destination.</p>
+                        }
+                    </div>
+
+                    <div class="mt-8 flex justify-center sm:justify-end">
+                        <a
+                            [routerLink]="['/voyages']"
+                            [queryParams]="{ destinationId: d.id }"
+                            class="inline-block rounded-full bg-[#181a24] text-[#ffe066] px-6 py-2 font-semibold hover:bg-[#2a2d3d] transition-colors"
+                        >
+                            Voir les voyages pour cette destination
+                        </a>
+                    </div>
                 </div>
             </div>
-
-            <div class="mt-6">
-                <h2 class="font-bold mb-2">Meilleures saisons</h2>
-                <div class="flex flex-wrap gap-2">
-                @for (season of d.bestSeasons; track season) {
-                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm">{{ season }}</span>
-                }
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <h2 class="font-bold mb-2">Tags</h2>
-                <div class="flex flex-wrap gap-2">
-                @for (tag of d.tags; track tag) {
-                    <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-sm">{{ tag }}</span>
-                }
-                </div>
-            </div>
-            </div>
-        </div>
         } @else {
-        <p class="mt-8 text-base">Chargement des informations...</p>
+            <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg p-8 text-center">
+                Chargement des informations...
+            </div>
         }
     </div>
 </section>

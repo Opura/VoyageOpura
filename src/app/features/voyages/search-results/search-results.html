@@ -8,28 +8,44 @@
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Résultats de recherche</h1>
         <p class="text-lg md:text-2xl mb-8">{{ filteredVoyages().length }} voyage(s) trouvé(s)</p>
 
-        <button pButton type="button" (click)="backToCatalogue()"
-            class="mb-8 bg-white hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-6 py-2 font-semibold border">
-            ← Retour au catalogue
-        </button>
+        <div class="hover:bg-[#ffe066] hover:text-[#181a24] rounded-full px-6 py-2 font-semibold mb-8 bg-white border">
+            <p-button type="button" (click)="backToCatalogue()">
+                <span>← Retour au catalogue</span>
+            </p-button>
+        </div>
 
         @if (isLoading()) {
-            <p>Chargement...</p>
+            <p class="text-xl font-semibold bg-white/80 px-4 py-2 rounded-full">Chargement...</p>
         } @else if (filteredVoyages().length === 0) {
-            <p class="text-xl">Aucun voyage ne correspond à vos critères.</p>
+            <p class="text-xl font-semibold bg-white/80 px-4 py-2 rounded-full">Aucun voyage ne correspond à vos critères.</p>
         } @else {
             <div class="container mx-auto">
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     @for (voyage of filteredVoyages(); track voyage.id) {
-                        <div class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
-                            <a [routerLink]="['/voyages', voyage.id]">
-                                <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 object-cover" />
-                                <div class="p-3">
-                                    <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
-                                    <p class="text-sm">{{ voyage.price }}€ — {{ voyage.duration }} jours</p>
+                        <a
+                            [routerLink]="['/voyages', voyage.id]"
+                            class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer block bg-white/90 shadow"
+                        >
+                            <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 object-cover" />
+                            <div class="p-3 space-y-2">
+                                <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                                <p class="text-sm text-slate-700">{{ voyage.price }}€ - {{ voyage.duration }} jours</p>
+
+                                <div class="flex items-center gap-2">
+                                    <span class="text-amber-500 font-semibold">★</span>
+                                    <span class="text-sm font-medium text-slate-800">{{ voyage.averageRating }}/5</span>
                                 </div>
-                            </a>
-                        </div>
+
+                                <div class="flex flex-wrap gap-1">
+                                    <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">
+                                        {{ voyage.category }}
+                                    </span>
+                                    <span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800">
+                                        {{ voyage.difficultyLevel }}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
                     }
                 </div>
             </div>

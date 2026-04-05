@@ -6,101 +6,9 @@
         (click)="visible = false">
     </div>
 }
-
-<p-drawer 
-    [(visible)]="visible"
-    [modal]="false"
-    appendTo="body"
-    styleClass="!z-200 bg-white/90 border-none shadow-lg p-4 w-full max-w-md">
-    <form class="space-y-6" (ngSubmit)="applyFilters()">
-        <div>
-            <label class="block font-semibold mb-1">Recherche</label>
-            <input type="text" class="p-inputtext w-full border rounded px-2 py-1" placeholder="Titre, destination, activité..." [(ngModel)]="searchText" name="searchText">
-        </div>
-        <div>
-            <label class="block font-semibold mb-1">Catégorie</label>
-            <select class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="category" name="category">
-                <option value="">Toutes</option>
-                <option value="adventure">Aventure</option>
-                <option value="cultural">Culture</option>
-                <option value="family">Famille</option>
-                <option value="luxury">Luxe</option>
-                <option value="beach">Plage</option>
-                <option value="sport">Sport</option>
-            </select>
-        </div>
-        <div>
-            <label class="block font-semibold mb-1">Continent</label>
-            <select class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="continent" name="continent">
-                <option value="">Tous</option>
-                <option value="Europe">Europe</option>
-                <option value="Asie">Asie</option>
-                <option value="Afrique">Afrique</option>
-                <option value="Amérique">Amérique</option>
-                <option value="Océanie">Océanie</option>
-            </select>
-        </div>
-        <div class="flex space-x-2">
-            <div class="flex-1">
-                <label class="block font-semibold mb-1">Prix min</label>
-                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="priceMin" name="priceMin" min="0">
-            </div>
-            <div class="flex-1">
-                <label class="block font-semibold mb-1">Prix max</label>
-                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="priceMax" name="priceMax" min="0">
-            </div>
-        </div>
-        <div class="flex space-x-2">
-            <div class="flex-1">
-                <label class="block font-semibold mb-1">Durée min (jours)</label>
-                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="durationMin" name="durationMin" min="1">
-            </div>
-            <div class="flex-1">
-                <label class="block font-semibold mb-1">Durée max (jours)</label>
-                <input type="number" class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="durationMax" name="durationMax" min="1">
-            </div>
-        </div>
-        <div>
-            <label class="block font-semibold mb-1">Date de départ</label>
-            <input type="date" class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="departureDate" name="departureDate">
-        </div>
-        <div>
-            <label class="inline-flex items-center">
-                <input type="checkbox" class="p-checkbox" [(ngModel)]="onlyAvailable" name="onlyAvailable">
-                <span class="ml-2">Disponibles uniquement</span>
-            </label>
-        </div>
-        <div>
-            <label class="block font-semibold mb-1">Difficulté</label>
-            <select class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="difficulty" name="difficulty">
-                <option value="">Toutes</option>
-                <option value="facile">Facile</option>
-                <option value="moyenne">Moyenne</option>
-                <option value="difficile">Difficile</option>
-            </select>
-        </div>
-        <div>
-            <label class="block font-semibold mb-1">Trier par</label>
-            <select class="p-inputtext w-full border rounded px-2 py-1" [(ngModel)]="sortOption" name="sortOption">
-                <option value="priceAsc">Prix croissant</option>
-                <option value="priceDesc">Prix décroissant</option>
-                <option value="bestRating">Meilleures notes</option>
-                <option value="durationAsc">Durée (plus courte en premier)</option>
-                <option value="departureSoon">Départ le plus proche</option>
-                <option value="popularity">Popularité</option>
-            </select>
-        </div>
-        <div class="flex justify-between gap-2">
-            <button pButton type="button"
-                (click)="resetFilters()"
-                label="Réinitialiser"
-                class="bg-gray-200 text-[#181a24] font-semibold px-6 py-2 rounded-full"></button>
-            <button pButton type="submit"
-                label="Appliquer"
-                class="bg-[#181a24] text-[#ffe066] hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300 font-semibold px-6 py-2 rounded-full"></button>
-        </div>
-    </form>
-</p-drawer>
+<app-search-drawer 
+    [(visible)]="visible">
+</app-search-drawer>
 
 <section class="relative text-[#181a24] min-h-screen">
     <div class="absolute inset-0 overflow-hidden">
@@ -115,34 +23,73 @@
             </p-button>
         </div>
         <div class="relative">
-            @if (voyages().length > 0) {
+            @if (isLoading()) {
+                <p class="text-xl font-semibold bg-white/80 px-4 py-2 rounded-full">Chargement...</p>
+            } @else if (displayedVoyages().length === 0) {
+                <p class="text-xl font-semibold bg-white/80 px-4 py-2 rounded-full">
+                    Aucun voyage ne correspond à vos critères.
+                </p>
+            } @else {
+                @if (hasActiveFilters()) {
+                    <p class="text-base md:text-lg mb-4 bg-white/80 px-4 py-2 rounded-full">
+                        {{ displayedVoyages().length }} voyage(s) trouvé(s)
+                    </p>
+                }
                 <div class="container mx-auto">
                     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        @for (voyage of voyages(); track voyage.id) {
-                            <div class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer">
+                        @for (voyage of displayedVoyages(); track voyage.id) {
+                            <a
+                                [routerLink]="['/voyages', voyage.id]"
+                                class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer block bg-white/90 shadow"
+                            >
                                 <button
                                     type="button"
-                                    (click)="toggleFavorite(voyage.id)"
+                                    (click)="toggleFavorite(voyage.id); $event.preventDefault(); $event.stopPropagation()"
                                     class="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2 py-1 text-xl"
                                     aria-label="Ajouter ou retirer des favoris"
                                 >
                                     {{ isFavorite(voyage.id) ? '♥' : '♡' }}
                                 </button>
-                                <a [routerLink]="['/voyages', voyage.id]">
-                                    <img [src]="voyage.imageUrls" [alt]="voyage.title" class="w-full h-64 object-cover" />
+
+                                <img
+                                    [src]="voyage.imageUrls[0]"
+                                    [alt]="voyage.title"
+                                    class="w-full h-64 object-cover"
+                                />
+
+                                <div class="p-3 space-y-2">
                                     <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
-                                </a>
-                            </div>
+                                    <p class="text-sm text-slate-700">
+                                        {{ voyage.price }}€ - {{ voyage.duration }} jours
+                                    </p>
+
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-amber-500 font-semibold">★</span>
+                                        <span class="text-sm font-medium text-slate-800">{{ voyage.averageRating }}/5</span>
+                                    </div>
+
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">
+                                            {{ voyage.category }}
+                                        </span>
+                                        <span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800">
+                                            {{ voyage.difficultyLevel }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </a>
                         }
                     </div>
                 </div>
             }
         </div>
-        <div class="flex justify-center mt-6 gap-2">
-            <button pButton type="button" (click)="previousPage()" [disabled]="currentPage() === 1" class="hover:bg-[#ffe066] hover:text-[#181a24] px-2 py-1 rounded-full">Précédent</button>
-            <span class="px-4 py-2 font-bold">Page {{ currentPage() }} / {{ totalPages }}</span>
-            <button pButton type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages" class="hover:bg-[#ffe066] hover:text-[#181a24] px-2 py-1 rounded-full">Suivant</button>
-        </div>
+        @if (!hasActiveFilters()) {
+            <div class="flex justify-center mt-6 gap-2">
+                <button pButton type="button" (click)="previousPage()" [disabled]="currentPage() === 1" class="hover:bg-[#ffe066] hover:text-[#181a24] px-2 py-1 rounded-full">Précédent</button>
+                <span class="px-4 py-2 font-bold">Page {{ currentPage() }} / {{ totalPages }}</span>
+                <button pButton type="button" (click)="nextPage()" [disabled]="currentPage() === totalPages" class="hover:bg-[#ffe066] hover:text-[#181a24] px-2 py-1 rounded-full">Suivant</button>
+            </div>
+        }
     </div>
 </section>
 

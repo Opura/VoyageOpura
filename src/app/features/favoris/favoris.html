@@ -6,8 +6,11 @@
     @if (!hasFavorites()) {
         <div class="max-w-xl mx-auto text-center bg-white/90 rounded-2xl p-8 shadow">
             <p class="text-lg mb-4">Aucun favori pour le moment.</p>
-            <p class="mb-6">Explore le catalogue pour ajouter des voyages a ta liste.</p>
-            <a routerLink="/voyages" class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold">
+            <p class="mb-6">Explore le catalogue pour ajouter des voyages à ta liste.</p>
+            <a
+                routerLink="/voyages"
+                class="inline-block bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold hover:bg-[#2a2d3d] transition-colors"
+            >
                 Voir le catalogue
             </a>
         </div>
@@ -15,23 +18,44 @@
         <div class="container mx-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @for (voyage of favoriteVoyages(); track voyage.id) {
-                <div class="relative rounded-border overflow-hidden">
-                    <button
-                    type="button"
-                    (click)="toggleFavorite(voyage.id)"
-                    class="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2 py-1 text-xl"
+                    <a
+                        [routerLink]="['/voyages', voyage.id]"
+                        class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer block bg-white/90 shadow"
                     >
-                    {{ isFavorite(voyage.id) ? '♥' : '♡' }}
-                    </button>
+                        <button
+                            type="button"
+                            (click)="toggleFavorite(voyage.id); $event.preventDefault(); $event.stopPropagation()"
+                            class="absolute right-3 top-3 z-10 rounded-full bg-white/90 px-2 py-1 text-xl"
+                            aria-label="Retirer des favoris"
+                        >
+                            {{ isFavorite(voyage.id) ? '♥' : '♡' }}
+                        </button>
 
-                    <a [routerLink]="['/voyages', voyage.id]">
-                    <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 object-cover" />
-                    <div class="p-3">
-                        <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
-                        <p class="text-sm">{{ voyage.price }}€ — {{ voyage.duration }} jours</p>
-                    </div>
+                        <img
+                            [src]="voyage.imageUrls[0]"
+                            [alt]="voyage.title"
+                            class="w-full h-64 object-cover"
+                        />
+
+                        <div class="p-3 space-y-2">
+                            <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                            <p class="text-sm text-slate-700">{{ voyage.price }}€ - {{ voyage.duration }} jours</p>
+
+                            <div class="flex items-center gap-2">
+                                <span class="text-amber-500 font-semibold">★</span>
+                                <span class="text-sm font-medium text-slate-800">{{ voyage.averageRating }}/5</span>
+                            </div>
+
+                            <div class="flex flex-wrap gap-1">
+                                <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">
+                                    {{ voyage.category }}
+                                </span>
+                                <span class="px-2 py-1 rounded-full text-xs bg-emerald-100 text-emerald-800">
+                                    {{ voyage.difficultyLevel }}
+                                </span>
+                            </div>
+                        </div>
                     </a>
-                </div>
                 }
             </div>
         </div>

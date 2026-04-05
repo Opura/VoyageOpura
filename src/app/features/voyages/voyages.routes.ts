@@ -7,7 +7,8 @@ export const VOYAGES_ROUTES: Routes = [
     },
     {
         path: 'search',
-        loadComponent: () => import('./search-results/search-results').then(m => m.SearchResults),
+        redirectTo: '',
+        pathMatch: 'full',
     },
     {
         path: ':id',
