@@ -4,7 +4,7 @@ import { FavorisServices } from '../../core/favorisServices/favoris.services';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterOutlet, RouterLink],
+  imports: [RouterLink],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
