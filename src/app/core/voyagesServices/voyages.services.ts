@@ -19,8 +19,8 @@ export class VoyagesServices {
   http = inject(HttpClient);
 
   getVoyagesPromoted(): Observable<Voyage[]> {
-    return this.http.get<{ data: Voyage[] }>(`${this.BASE_URL}/voyages/featured`).pipe(
-      map((response) => response.data),
+    return this.http.get<Voyage[] | { data: Voyage[] }>(`${this.BASE_URL}/voyages/featured`).pipe(
+      map((response) => Array.isArray(response) ? response : response.data),
       catchError((error) => {
         console.error('Error fetching promoted voyages:', error);
         return throwError(() => error);
@@ -28,8 +28,22 @@ export class VoyagesServices {
     );
   }
 
+  // getVoyages(page: number = 1): Observable<VoyagesResponse> {
+  //   return this.http.get<VoyagesResponse>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
+  //     catchError((error) => {
+  //       console.error(`Error fetching voyages page ${page}:`, error);
+  //       return throwError(() => error);
+  //     })
+  //   );
+  // }
+
   getVoyages(page: number = 1): Observable<VoyagesResponse> {
-    return this.http.get<VoyagesResponse>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
+    return this.http.get<VoyagesResponse | { data: Voyage[]; meta: VoyagesResponse['meta'] }>(
+      `${this.BASE_URL}/voyages?page=${page}`).pipe(
+      map((response) => ('data' in response && 'meta' in response
+        ? { data: response.data, meta: response.meta }
+        : response
+      )),
       catchError((error) => {
         console.error(`Error fetching voyages page ${page}:`, error);
         return throwError(() => error);
@@ -102,7 +116,8 @@ export class VoyagesServices {
   }
 
   getVoyageById(id: string): Observable<Voyage> {
-    return this.http.get<Voyage>(`${this.BASE_URL}/voyages/${id}`).pipe(
+    return this.http.get<Voyage | { data: Voyage }>(`${this.BASE_URL}/voyages/${id}`).pipe(
+      map((response) => ('data' in response ? response.data : response)),
       catchError((error) => {
         console.error('Error fetching voyage detail:', error);
         return throwError(() => error);
