@@ -27,7 +27,7 @@ export class SearchResults {
   allDestinations = toSignal(this.destinationsServices.getAllDestinations(), { initialValue: [] as Destination[] });
   isLoading = computed(() => this.allVoyages().length === 0);
 
-  private params = toSignal(this.route.queryParams, { initialValue: {} as Params });
+  params = toSignal(this.route.queryParams, { initialValue: {} as Params });
 
   searchText  = computed(() => this.params()['searchText'] || '');
   category    = computed(() => this.params()['category'] || '');

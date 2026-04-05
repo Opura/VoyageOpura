@@ -12,34 +12,31 @@
                         <div class="relative rounded-border overflow-hidden bg-white/90 shadow hover:scale-105 transition-transform duration-300">
                             <a [routerLink]="['/voyages', voyage.id]">
                                 <img [src]="voyage.imageUrls[0]" [alt]="voyage.title" class="w-full h-64 object-cover" />
+                                <div class="p-3 space-y-2">
+                                    <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
+                                    <p class="text-sm text-slate-700">{{ voyage.destination.name }} - {{ voyage.destination.country }}</p>
+                                    <p class="text-sm text-slate-700">{{ voyage.price }} EUR - {{ voyage.duration }} jours</p>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-amber-500 font-semibold">★</span>
+                                        <span class="text-sm font-medium text-slate-800">{{ voyage.averageRating }}/5</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1">
+                                        @for (tag of voyage.destination.tags; track tag) {
+                                            <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">{{ tag }}</span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="absolute right-3 top-3">
+                                    <button
+                                        type="button"
+                                        (click)="toggleFavorite(voyage.id)"
+                                        class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow hover:bg-slate-100"
+                                        aria-label="Ajouter ou retirer des favoris"
+                                    >
+                                        {{ isFavorite(voyage.id) ? '♥' : '♡' }}
+                                    </button>
+                                </div>
                             </a>
-                            <div class="p-3 space-y-2">
-                                <h3 class="font-bold text-xl">{{ voyage.title }}</h3>
-                                <p class="text-sm text-slate-700">{{ voyage.destination.name }} - {{ voyage.destination.country }}</p>
-                                <p class="text-sm text-slate-700">{{ voyage.price }} EUR - {{ voyage.duration }} jours</p>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-amber-500 font-semibold">★</span>
-                                    <span class="text-sm font-medium text-slate-800">{{ voyage.averageRating }}/5</span>
-                                </div>
-                                <div class="flex flex-wrap gap-1">
-                                    @for (tag of voyage.destination.tags; track tag) {
-                                        <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">{{ tag }}</span>
-                                    }
-                                </div>
-                            </div>
-                            <div class="absolute left-3 top-3">
-                                <p-tag [value]="voyage.price + '€'" />
-                            </div>
-                            <div class="absolute right-3 top-3">
-                                <button
-                                    type="button"
-                                    (click)="toggleFavorite(voyage.id)"
-                                    class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-xl shadow hover:bg-slate-100"
-                                    aria-label="Ajouter ou retirer des favoris"
-                                >
-                                    {{ isFavorite(voyage.id) ? '♥' : '♡' }}
-                                </button>
-                            </div>
                         </div>
                     </div>
                     </ng-template>

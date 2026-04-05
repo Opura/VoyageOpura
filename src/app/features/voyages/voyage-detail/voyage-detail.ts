@@ -1,5 +1,4 @@
 import { Component, effect, inject, signal } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,7 +12,7 @@ import { FavorisServices } from '../../../core/favorisServices/favoris.services'
 
 @Component({
   selector: 'app-voyage-detail',
-  imports: [Header, Footer, RouterLink, DatePipe, ReactiveFormsModule],
+  imports: [Header, Footer, RouterLink, ReactiveFormsModule],
   templateUrl: './voyage-detail.html',
   styleUrl: './voyage-detail.css',
 })
