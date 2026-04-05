@@ -7,6 +7,7 @@ import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
 
 import { VoyagesServices } from '../../../core/voyagesServices/voyages.services';
+import { Voyage } from '../../../core/models/voyage.model';
 import { DestinationsServices } from '../../../core/destinationsServices/destinations.services';
 
 interface VoyageFiltersFormValue {
@@ -40,7 +41,7 @@ export class SearchDrawer {
   @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
 
-  categories = toSignal(this.voyagesServices.getVoyageCategories(), { initialValue: [] as string[] });
+  categories = toSignal(this.voyagesServices.getVoyageCategories(), { initialValue: [] as Voyage['category'][] });
   continents = toSignal(this.destinationsServices.getDestinationContinents(), { initialValue: [] as string[] });
   queryParams = toSignal(this.route.queryParams, { initialValue: {} as Params });
 

@@ -26,7 +26,7 @@ export class Promoted implements OnInit {
   voyagesServices = inject(VoyagesServices);
   favorisService = inject(FavorisServices);
 
-  voyagesPromoted = toSignal(this.voyagesServices.getVoyagesFeatured(), { initialValue: [] as Voyage[] });
+  voyagesPromoted = toSignal(this.voyagesServices.getVoyagesPromoted(), { initialValue: [] as Voyage[] });
 
   responsiveOptions: ResponsiveOption[] = [];
 

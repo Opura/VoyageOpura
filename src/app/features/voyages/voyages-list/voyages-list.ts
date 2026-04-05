@@ -166,9 +166,9 @@ export class VoyagesList implements OnInit {
 
   isLoading = computed(() => (this.hasActiveFilters() ? this.allVoyages().length === 0 : this.voyages().length === 0));
   
-  async loadVoyages(): Promise<void> {
+  async loadVoyages(page: number = 1): Promise<void> {
     try {
-      const voyagesResponse = await firstValueFrom(this.voyagesServices.getVoyagesPage(this.currentPage()));
+      const voyagesResponse = await firstValueFrom(this.voyagesServices.getVoyagesPage(page));
       this.voyages.set(voyagesResponse.data ?? []);
       this.totalPages = Math.max(voyagesResponse.meta?.totalPages ?? 1, 1);
     } catch (error) {
@@ -179,20 +179,20 @@ export class VoyagesList implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadVoyages();
+    this.loadVoyages(1);
   }
 
   previousPage(): void {
     if (this.currentPage() > 1) {
       this.currentPage.set(this.currentPage() - 1);
-      this.loadVoyages();
+      this.loadVoyages(this.currentPage());
     }
   }
 
   nextPage(): void {
     if (this.currentPage() < this.totalPages) {
       this.currentPage.set(this.currentPage() + 1);
-      this.loadVoyages();
+      this.loadVoyages(this.currentPage());
     }
   }
 
