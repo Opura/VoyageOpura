@@ -40,6 +40,7 @@ export class SearchResults {
   onlyAvailable  = computed(() => this.params()['onlyAvailable'] === 'true');
   difficulty     = computed(() => this.params()['difficulty'] || '');
   sortOption     = computed(() => this.params()['sortOption'] || 'priceAsc');
+  destinationId = computed(() => this.params()['destinationId'] || '');
 
   filteredVoyages = computed(() => {
     let result = this.allVoyages();
@@ -77,6 +78,9 @@ export class SearchResults {
     }
     if (this.difficulty()) {
       result = result.filter(v => v.difficultyLevel === this.difficulty());
+    }
+    if (this.destinationId()) {
+      result = result.filter(v => v.destinationId === this.destinationId());
     }
 
     switch (this.sortOption()) {

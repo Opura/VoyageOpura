@@ -2,52 +2,147 @@
 
 <section class="relative text-[#181a24] min-h-screen">
     <div class="absolute inset-0 overflow-hidden">
-        <img src="../../../../assets/Voyages.jpg" alt="Destination detail" class="w-full h-full object-cover object-center opacity-35 fixed">
+        <img
+        src="../../../../assets/Voyages.jpg"
+        alt="Destination detail"
+        class="w-full h-full object-cover object-center opacity-30 fixed"
+        />
     </div>
 
-    <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
-        @if (destination(); as d) {
-        <div class="w-full max-w-5xl rounded-2xl bg-white/90 backdrop-blur shadow-lg overflow-hidden">
-            <img [src]="d.imageUrl" [alt]="d.name" class="w-full h-80 object-cover" />
-
-            <div class="p-6">
-            <h1 class="text-3xl md:text-4xl font-bold">{{ d.name }}</h1>
-            <p class="mt-2 text-slate-700">{{ d.country }} - {{ d.continent }}</p>
-
-            <p class="mt-4 text-slate-800">{{ d.description }}</p>
-
-            <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="rounded-xl bg-slate-50 p-4">
-                <p class="text-sm text-slate-500">Climat</p>
-                <p class="font-semibold">{{ d.climate }}</p>
-                </div>
-                <div class="rounded-xl bg-slate-50 p-4">
-                <p class="text-sm text-slate-500">Note moyenne</p>
-                <p class="font-semibold">{{ d.averageRating }}/5</p>
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <h2 class="font-bold mb-2">Meilleures saisons</h2>
-                <div class="flex flex-wrap gap-2">
-                @for (season of d.bestSeasons; track season) {
-                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-sm">{{ season }}</span>
-                }
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <h2 class="font-bold mb-2">Tags</h2>
-                <div class="flex flex-wrap gap-2">
-                @for (tag of d.tags; track tag) {
-                    <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 text-sm">{{ tag }}</span>
-                }
-                </div>
-            </div>
+    <div class="relative z-10 px-4 py-30">
+        @if (!destination()) {
+        <div class="container mx-auto max-w-5xl">
+            <div class="bg-white/90 rounded-border shadow p-8 text-center">
+            <p class="text-lg font-semibold">Chargement des informations...</p>
             </div>
         </div>
         } @else {
-        <p class="mt-8 text-base">Chargement des informations...</p>
+        @let d = destination()!;
+
+        <div class="container mx-auto max-w-6xl space-y-8">
+
+            <section class="bg-white/90 rounded-border shadow overflow-hidden">
+            <img [src]="d.imageUrl" [alt]="d.name" class="w-full h-80 object-cover" />
+
+            <div class="p-6 space-y-4">
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                <div>
+                    <h1 class="text-3xl md:text-5xl font-bold">{{ d.name }}</h1>
+                    <p class="mt-1 text-slate-700">{{ d.country }} - {{ d.continent }}</p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800">
+                    {{ d.climate }}
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
+                    ★ {{ d.averageRating }}/5
+                    </span>
+                </div>
+                </div>
+
+                <p class="text-slate-800">{{ d.description }}</p>
+
+                <div class="flex flex-wrap gap-2">
+                @for (tag of d.tags; track tag) {
+                    <span class="px-3 py-1 rounded-full text-xs bg-sky-100 text-sky-800">{{ tag }}</span>
+                }
+                </div>
+            </div>
+            </section>
+
+            <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
+            <h2 class="text-2xl font-bold mb-4">Informations climatiques</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="rounded-border bg-slate-50 p-4">
+                <p class="text-sm text-slate-500">Climat</p>
+                <p class="text-lg font-semibold mt-1">{{ d.climate }}</p>
+                </div>
+
+                <div class="rounded-border bg-slate-50 p-4">
+                <p class="text-sm text-slate-500 mb-2">Meilleures saisons</p>
+                <div class="flex flex-wrap gap-2">
+                    @for (season of d.bestSeasons; track season) {
+                    <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-sm">{{ season }}</span>
+                    }
+                </div>
+                </div>
+            </div>
+            </section>
+
+            <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
+            <h2 class="text-2xl font-bold mb-4">Carte interactive</h2>
+            <div #mapContainer class="w-full h-[420px] rounded-border border border-slate-200"></div>
+            </section>
+
+            <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
+            <div class="flex items-center justify-between gap-4 flex-wrap mb-4">
+                <h2 class="text-2xl font-bold">Hôtels</h2>
+                <span class="text-sm text-slate-600">{{ hotels().length }} trouvé(s)</span>
+            </div>
+
+            @if (hotels().length === 0) {
+                <p class="text-slate-700">Aucun hôtel disponible pour cette destination.</p>
+            } @else {
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (hotel of hotels(); track hotel.id) {
+                    <article class="rounded-border overflow-hidden bg-white shadow border border-slate-100">
+                    <img [src]="hotel.imageUrl" [alt]="hotel.name" class="w-full h-48 object-cover" />
+                    <div class="p-3 space-y-2">
+                        <h3 class="font-bold text-lg">{{ hotel.name }}</h3>
+                        <p class="text-sm text-slate-700">{{ hotel.stars }} ★</p>
+                        <p class="text-sm text-slate-700">{{ hotel.pricePerNight }} EUR / nuit</p>
+                        <p class="text-sm text-slate-700">{{ hotel.address }}</p>
+
+                        <div class="flex flex-wrap gap-1">
+                        @for (amenity of hotel.amenities; track amenity) {
+                            <span class="px-2 py-1 rounded-full text-xs bg-slate-100 text-slate-800">{{ amenity }}</span>
+                        }
+                        </div>
+                    </div>
+                    </article>
+                }
+                </div>
+            }
+            </section>
+
+            <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
+            <div class="flex items-center justify-between gap-4 flex-wrap mb-4">
+                <h2 class="text-2xl font-bold">Activités</h2>
+                <span class="text-sm text-slate-600">{{ activities().length }} trouvée(s)</span>
+            </div>
+
+            @if (activities().length === 0) {
+                <p class="text-slate-700">Aucune activité disponible pour cette destination.</p>
+            } @else {
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                @for (activity of activities(); track activity.id) {
+                    <article class="rounded-border overflow-hidden bg-white shadow border border-slate-100">
+                    <img [src]="activity.imageUrl" [alt]="activity.name" class="w-full h-48 object-cover" />
+                    <div class="p-3 space-y-2">
+                        <h3 class="font-bold text-lg">{{ activity.name }}</h3>
+                        <p class="text-sm text-slate-700">Catégorie: {{ activity.category }}</p>
+                        <p class="text-sm text-slate-700">Durée: {{ activity.duration }} h</p>
+                        <p class="text-sm text-slate-700">Prix: {{ activity.price }} EUR</p>
+                        <p class="text-sm text-slate-700">{{ activity.description }}</p>
+                    </div>
+                    </article>
+                }
+                </div>
+            }
+            </section>
+
+            <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
+            <a
+                [routerLink]="['/voyages/search']"
+                [queryParams]="{ destinationId: d.id }"
+                class="inline-block bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300"
+            >
+                Voir les voyages pour cette destination
+            </a>
+            </section>
+
+        </div>
         }
     </div>
 </section>

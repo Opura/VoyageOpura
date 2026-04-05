@@ -2,14 +2,65 @@
 
 <section class="relative text-[#181a24] min-h-screen">
     <div class="absolute inset-0 overflow-hidden">
-        <img src="../../../../assets/Voyages.jpg" alt="Destinations" class="w-full h-full object-cover object-center opacity-35 fixed">
+        <img
+        src="../../../../assets/Voyages.jpg"
+        alt="Destinations"
+        class="w-full h-full object-cover object-center opacity-35 fixed"
+        />
     </div>
 
     <div class="relative z-10 flex flex-col h-full items-center px-4 py-30">
         <h1 class="text-4xl md:text-6xl font-bold mb-4">Catalogue des destinations</h1>
         <p class="text-lg md:text-2xl mb-8">Choisissez une destination pour voir ses détails</p>
 
-        @if (destinations().length > 0) {
+        <div class="w-full max-w-3xl mb-8 bg-white/90 rounded-border shadow p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+            <label class="block text-sm font-semibold mb-1">Continent</label>
+            <select
+                class="w-full border rounded px-3 py-2 bg-white"
+                [ngModel]="selectedContinent()"
+                (ngModelChange)="onContinentChange($event)"
+            >
+                <option value="">Tous</option>
+                @for (continent of continents(); track continent) {
+                <option [value]="continent">{{ continent }}</option>
+                }
+            </select>
+            </div>
+
+            <div>
+            <label class="block text-sm font-semibold mb-1">Climat</label>
+            <select
+                class="w-full border rounded px-3 py-2 bg-white"
+                [ngModel]="selectedClimate()"
+                (ngModelChange)="onClimateChange($event)"
+            >
+                <option value="">Tous</option>
+                <option value="tropical">Tropical</option>
+                <option value="temperate">Temperate</option>
+                <option value="arid">Arid</option>
+                <option value="polar">Polar</option>
+            </select>
+            </div>
+
+            <div class="flex items-end">
+            <button
+                type="button"
+                (click)="resetFilters()"
+                class="w-full bg-[#181a24] text-[#ffe066] rounded-full px-4 py-2 font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300"
+            >
+                Réinitialiser
+            </button>
+            </div>
+        </div>
+        </div>
+
+        @if (isLoading()) {
+        <p class="mt-8 text-base">Chargement des destinations...</p>
+        } @else if (errorMessage()) {
+        <p class="mt-8 text-base text-red-700">{{ errorMessage() }}</p>
+        } @else if (destinations().length > 0) {
         <div class="container mx-auto">
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @for (destination of destinations(); track destination.id) {
@@ -18,21 +69,22 @@
                 class="relative rounded-border overflow-hidden hover:scale-105 transition-transform duration-300 cursor-pointer block bg-white/90 shadow"
                 >
                 <img [src]="destination.imageUrl" [alt]="destination.name" class="w-full h-64 object-cover" />
+
                 <div class="p-3 space-y-2">
                     <h3 class="font-bold text-xl">{{ destination.name }}</h3>
                     <p class="text-sm text-slate-700">{{ destination.country }} - {{ destination.continent }}</p>
 
                     <div class="flex items-center gap-2">
-                        <span class="text-amber-500 font-semibold">★</span>
-                        <span class="text-sm font-medium text-slate-800">{{ destination.averageRating }}/5</span>
-                        </div>
+                    <span class="text-amber-500 font-semibold">★</span>
+                    <span class="text-sm font-medium text-slate-800">{{ destination.averageRating }}/5</span>
+                    </div>
 
-                        <div class="flex flex-wrap gap-1">
-                        @for (tag of destination.tags; track tag) {
-                            <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">
-                            {{ tag }}
-                            </span>
-                        }
+                    <div class="flex flex-wrap gap-1">
+                    @for (tag of destination.tags; track tag) {
+                        <span class="px-2 py-1 rounded-full text-xs bg-sky-100 text-sky-800">
+                        {{ tag }}
+                        </span>
+                    }
                     </div>
                 </div>
                 </a>
@@ -40,7 +92,7 @@
             </div>
         </div>
         } @else {
-        <p class="mt-8 text-base">Chargement des destinations...</p>
+        <p class="mt-8 text-base">Aucune destination ne correspond aux filtres.</p>
         }
     </div>
 </section>
