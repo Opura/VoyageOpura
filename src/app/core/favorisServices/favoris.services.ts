@@ -37,12 +37,5 @@ export class FavorisServices {
     return this.favoriteIds().includes(id);
   }
 
-  clearFavorites(): void {
-    this.favoriteIds.set([]);
-    this.saveToStorage([]);
-  }
-
-  
-
 }
 

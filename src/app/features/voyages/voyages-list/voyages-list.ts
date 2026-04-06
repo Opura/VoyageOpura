@@ -1,8 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { toSignal, toObservable } from '@angular/core/rxjs-interop';
-import { firstValueFrom, switchMap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 import { Header } from "../../../shared/header/header";
 import { Footer } from "../../../shared/footer/footer";
