@@ -28,15 +28,6 @@ export class VoyagesServices {
     );
   }
 
-  // getVoyages(page: number = 1): Observable<VoyagesResponse> {
-  //   return this.http.get<VoyagesResponse>(`${this.BASE_URL}/voyages?page=${page}`).pipe(
-  //     catchError((error) => {
-  //       console.error(`Error fetching voyages page ${page}:`, error);
-  //       return throwError(() => error);
-  //     })
-  //   );
-  // }
-
   getVoyages(page: number = 1): Observable<VoyagesResponse> {
     return this.http.get<VoyagesResponse | { data: Voyage[]; meta: VoyagesResponse['meta'] }>(
       `${this.BASE_URL}/voyages?page=${page}`).pipe(

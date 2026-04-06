@@ -64,19 +64,19 @@ export class DestinationsList {
 
 
   async onContinentChange(value: string): Promise<void> {
-  this.selectedContinent.set(value);
-  await this.loadDestinations();
+    this.selectedContinent.set(value);
+    await this.loadDestinations();
   }
 
   async onClimateChange(value: ClimateFilter): Promise<void> {
-  this.selectedClimate.set(value);
-  await this.loadDestinations();
+    this.selectedClimate.set(value);
+    await this.loadDestinations();
   }
 
   async resetFilters(): Promise<void> {
-  this.selectedContinent.set('');
-  this.selectedClimate.set('');
-  await this.loadDestinations();
+    this.selectedContinent.set('');
+    this.selectedClimate.set('');
+    await this.loadDestinations();
   }
 
 }

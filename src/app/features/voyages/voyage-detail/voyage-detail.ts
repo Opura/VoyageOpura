@@ -84,10 +84,6 @@ export class VoyageDetail {
   }
 
   async submitReview(): Promise<void> {
-    if (this.reviewForm.invalid) {
-      this.reviewForm.markAllAsTouched();
-      return;
-    }
 
     if (!this.voyageId) {
       this.showMessage('error', 'Identifiant du voyage introuvable.');
