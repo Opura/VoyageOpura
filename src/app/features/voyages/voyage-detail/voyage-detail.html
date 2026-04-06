@@ -3,9 +3,9 @@
 <section class="relative text-[#181a24] min-h-screen">
     <div class="absolute inset-0 overflow-hidden">
         <img
-        src="../../../../assets/Voyages.jpg"
-        alt="Voyage detail background"
-        class="w-full h-full object-cover object-center opacity-25 fixed"
+            src="../../../../assets/Voyages.jpg"
+            alt="Voyage detail background"
+            class="w-full h-full object-cover object-center opacity-25 fixed"
         />
     </div>
 
@@ -13,7 +13,7 @@
         @if (!voyage()) {
         <div class="container mx-auto max-w-4xl">
             <div class="bg-white/90 rounded-border shadow p-8 text-center">
-            <p class="text-lg font-semibold">Chargement du voyage...</p>
+                <p class="text-lg font-semibold">Chargement du voyage...</p>
             </div>
         </div>
         } @else {
@@ -32,219 +32,219 @@
             }
 
             <section class="bg-white/90 rounded-border shadow p-4 md:p-6 space-y-4">
-            <div class="flex items-start justify-between gap-4 flex-wrap">
-                <div>
-                <h1 class="text-3xl md:text-5xl font-bold">{{ voyage()!.title }}</h1>
-                <p class="mt-2 text-slate-700">
-                    Destination:
-                    <a
-                    [routerLink]="['/destinations', voyage()!.destination.id]"
-                    class="font-semibold underline hover:text-sky-700"
-                    >
-                    {{ voyage()!.destination.name }} ({{ voyage()!.destination.country }})
-                    </a>
-                </p>
-                </div>
+                <div class="flex items-start justify-between gap-4 flex-wrap">
+                    <div>
+                        <h1 class="text-3xl md:text-5xl font-bold">{{ voyage()!.title }}</h1>
+                        <p class="mt-2 text-slate-700">
+                            Destination:
+                            <a
+                                [routerLink]="['/destinations', voyage()!.destination.id]"
+                                class="font-semibold underline hover:text-sky-700"
+                            >
+                                {{ voyage()!.destination.name }} ({{ voyage()!.destination.country }})
+                            </a>
+                        </p>
+                    </div>
 
-                <div class="flex items-center gap-2">
-                <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800">
-                    {{ voyage()!.category }}
-                </span>
-                <span
-                    class="px-3 py-1 rounded-full text-xs font-semibold"
-                    [class.bg-emerald-100]="voyage()!.difficultyLevel === 'easy'"
-                    [class.text-emerald-800]="voyage()!.difficultyLevel === 'easy'"
-                    [class.bg-amber-100]="voyage()!.difficultyLevel === 'medium'"
-                    [class.text-amber-800]="voyage()!.difficultyLevel === 'medium'"
-                    [class.bg-red-100]="voyage()!.difficultyLevel === 'hard'"
-                    [class.text-red-800]="voyage()!.difficultyLevel === 'hard'"
-                >
-                    {{ voyage()!.difficultyLevel }}
-                </span>
+                    <div class="flex items-center gap-2">
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-sky-100 text-sky-800">
+                            {{ voyage()!.category }}
+                        </span>
+                        <span
+                            class="px-3 py-1 rounded-full text-xs font-semibold"
+                            [class.bg-emerald-100]="voyage()!.difficultyLevel === 'easy'"
+                            [class.text-emerald-800]="voyage()!.difficultyLevel === 'easy'"
+                            [class.bg-amber-100]="voyage()!.difficultyLevel === 'medium'"
+                            [class.text-amber-800]="voyage()!.difficultyLevel === 'medium'"
+                            [class.bg-red-100]="voyage()!.difficultyLevel === 'hard'"
+                            [class.text-red-800]="voyage()!.difficultyLevel === 'hard'"
+                        >
+                            {{ voyage()!.difficultyLevel }}
+                        </span>
 
-                <button
-                    type="button"
-                    (click)="toggleFavorite(voyage()!.id)"
-                    class="rounded-full bg-white/90 px-3 py-1 text-xl shadow hover:bg-slate-100"
-                    aria-label="Ajouter ou retirer des favoris"
-                >
-                    {{ isFavorite(voyage()!.id) ? '♥' : '♡' }}
-                </button>
+                        <button
+                            type="button"
+                            (click)="toggleFavorite(voyage()!.id)"
+                            class="rounded-full bg-white/90 px-3 py-1 text-xl shadow hover:bg-slate-100"
+                            aria-label="Ajouter ou retirer des favoris"
+                        >
+                            {{ isFavorite(voyage()!.id) ? '♥' : '♡' }}
+                        </button>
+                    </div>
                 </div>
-            </div>
             </section>
 
             <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
-            <h2 class="text-2xl font-bold mb-4">Galerie</h2>
+                <h2 class="text-2xl font-bold mb-4">Galerie</h2>
 
-            @if (hasImages()) {
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                @for (img of voyage()!.imageUrls; track img) {
-                    <img
-                    [src]="img"
-                    [alt]="voyage()!.title"
-                    class="w-full h-56 object-cover rounded-border"
-                    />
+                @if (hasImages()) {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @for (img of voyage()!.imageUrls; track img) {
+                        <img
+                            [src]="img"
+                            [alt]="voyage()!.title"
+                            class="w-full h-56 object-cover rounded-border"
+                        />
+                    }
+                    </div>
+                } @else {
+                    <div class="rounded-border bg-slate-100 text-slate-700 p-6 text-center">
+                        Aucune image disponible pour ce voyage.
+                    </div>
                 }
-                </div>
-            } @else {
-                <div class="rounded-border bg-slate-100 text-slate-700 p-6 text-center">
-                Aucune image disponible pour ce voyage.
-                </div>
-            }
             </section>
 
             <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div class="bg-white/90 rounded-border shadow p-4">
-                <p class="text-xs uppercase text-slate-500">Durée</p>
-                <p class="text-xl font-bold">{{ voyage()!.duration }} jours</p>
-            </div>
-            <div class="bg-white/90 rounded-border shadow p-4">
-                <p class="text-xs uppercase text-slate-500">Prix</p>
-                <p class="text-xl font-bold">{{ voyage()!.price }} EUR</p>
-            </div>
-            <div class="bg-white/90 rounded-border shadow p-4">
-                <p class="text-xs uppercase text-slate-500">Places</p>
-                <p class="text-xl font-bold">{{ voyage()!.availableSeats }} / {{ voyage()!.totalSeats }}</p>
-            </div>
-            <div class="bg-white/90 rounded-border shadow p-4">
-                <p class="text-xs uppercase text-slate-500">Départ / Retour</p>
-                <p class="font-semibold">{{ formatDate(voyage()!.departureDate) }}</p>
-                <p class="font-semibold">{{ formatDate(voyage()!.returnDate) }}</p>
-            </div>
-            <div class="bg-white/90 rounded-border shadow p-4">
-                <p class="text-xs uppercase text-slate-500">Note moyenne</p>
-                <p class="text-xl font-bold">★ {{ voyage()!.averageRating }}/5</p>
-            </div>
+                <div class="bg-white/90 rounded-border shadow p-4">
+                    <p class="text-xs uppercase text-slate-500">Durée</p>
+                    <p class="text-xl font-bold">{{ voyage()!.duration }} jours</p>
+                </div>
+                <div class="bg-white/90 rounded-border shadow p-4">
+                    <p class="text-xs uppercase text-slate-500">Prix</p>
+                    <p class="text-xl font-bold">{{ voyage()!.price }} EUR</p>
+                </div>
+                <div class="bg-white/90 rounded-border shadow p-4">
+                    <p class="text-xs uppercase text-slate-500">Places</p>
+                    <p class="text-xl font-bold">{{ voyage()!.availableSeats }} / {{ voyage()!.totalSeats }}</p>
+                </div>
+                <div class="bg-white/90 rounded-border shadow p-4">
+                    <p class="text-xs uppercase text-slate-500">Départ / Retour</p>
+                    <p class="font-semibold">{{ formatDate(voyage()!.departureDate) }}</p>
+                    <p class="font-semibold">{{ formatDate(voyage()!.returnDate) }}</p>
+                </div>
+                <div class="bg-white/90 rounded-border shadow p-4">
+                    <p class="text-xs uppercase text-slate-500">Note moyenne</p>
+                    <p class="text-xl font-bold">★ {{ voyage()!.averageRating }}/5</p>
+                </div>
             </section>
 
             <section class="bg-white/90 rounded-border shadow p-4 md:p-6">
-            <h2 class="text-2xl font-bold mb-4">Points forts</h2>
-            <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                @for (point of voyage()!.highlights; track point) {
-                <li class="rounded-border bg-sky-50 text-sky-900 px-3 py-2">• {{ point }}</li>
-                }
-            </ul>
+                <h2 class="text-2xl font-bold mb-4">Points forts</h2>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    @for (point of voyage()!.highlights; track point) {
+                    <li class="rounded-border bg-sky-50 text-sky-900 px-3 py-2">• {{ point }}</li>
+                    }
+                </ul>
             </section>
 
             <section class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="bg-white/90 rounded-border shadow p-4 md:p-6">
-                <h2 class="text-2xl font-bold mb-4 text-emerald-700">Inclus</h2>
-                <ul class="space-y-2">
-                @for (item of voyage()!.included; track item) {
-                    <li class="text-emerald-800">✔ {{ item }}</li>
-                }
-                </ul>
-            </div>
+                <div class="bg-white/90 rounded-border shadow p-4 md:p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-emerald-700">Inclus</h2>
+                    <ul class="space-y-2">
+                    @for (item of voyage()!.included; track item) {
+                        <li class="text-emerald-800">✔ {{ item }}</li>
+                    }
+                    </ul>
+                </div>
 
-            <div class="bg-white/90 rounded-border shadow p-4 md:p-6">
-                <h2 class="text-2xl font-bold mb-4 text-red-700">Exclus</h2>
-                <ul class="space-y-2">
-                @for (item of voyage()!.excluded; track item) {
-                    <li class="text-red-800">✖ {{ item }}</li>
-                }
-                </ul>
-            </div>
+                <div class="bg-white/90 rounded-border shadow p-4 md:p-6">
+                    <h2 class="text-2xl font-bold mb-4 text-red-700">Exclus</h2>
+                    <ul class="space-y-2">
+                    @for (item of voyage()!.excluded; track item) {
+                        <li class="text-red-800">✖ {{ item }}</li>
+                    }
+                    </ul>
+                </div>
             </section>
 
             <section class="bg-white/90 rounded-border shadow p-4 md:p-6 space-y-6">
-            <h2 class="text-2xl font-bold">Avis clients</h2>
+                <h2 class="text-2xl font-bold">Avis clients</h2>
 
-            @if (isReviewsLoading()) {
-                <p>Chargement des avis...</p>
-            } @else if (reviewsError()) {
-                <div class="rounded-border bg-red-100 text-red-800 px-4 py-3">
-                {{ reviewsError() }}
-                </div>
-            } @else {
-                <div class="bg-slate-50 rounded-border p-4 space-y-3">
-                <div class="flex items-center gap-6 flex-wrap">
-                    <p class="text-lg font-semibold">Moyenne: ★ {{ reviews()?.stats?.averageRating }}/5</p>
-                    <p class="text-lg font-semibold">Total avis: {{ reviews()?.stats?.total }}</p>
-                </div>
-
-                @for (star of ratingSteps; track star) {
-                    <div class="flex items-center gap-3">
-                    <span class="w-16 text-sm font-semibold">{{ star }} étoile{{ star > 1 ? 's' : '' }}</span>
-                    <div class="h-3 w-full bg-slate-200 rounded-full overflow-hidden">
-                        <div
-                        class="h-3 bg-amber-400 rounded-full"
-                        [style.width.%]="distributionPercent(star)"
-                        ></div>
+                @if (isReviewsLoading()) {
+                    <p>Chargement des avis...</p>
+                } @else if (reviewsError()) {
+                    <div class="rounded-border bg-red-100 text-red-800 px-4 py-3">
+                        {{ reviewsError() }}
                     </div>
-                    <span class="w-12 text-sm text-right">{{ distributionPercent(star) }}%</span>
-                    </div>
-                }
-                </div>
-
-                <div class="space-y-4">
-                @if (!reviews()?.reviews?.length) {
-                    <p class="text-slate-700">Aucun avis pour le moment.</p>
                 } @else {
-                    @for (review of reviews()!.reviews; track trackByReviewId($index, review)) {
-                    <article class="rounded-border border border-slate-200 p-4 bg-white">
-                        <div class="flex items-center justify-between gap-2 flex-wrap">
-                        <h3 class="font-bold">{{ review.title }}</h3>
-                        <span class="text-sm text-slate-600">{{ formatDate(review.createdAt) }}</span>
+                    <div class="bg-slate-50 rounded-border p-4 space-y-3">
+                        <div class="flex items-center gap-6 flex-wrap">
+                            <p class="text-lg font-semibold">Moyenne: ★ {{ reviews()?.stats?.averageRating }}/5</p>
+                            <p class="text-lg font-semibold">Total avis: {{ reviews()?.stats?.total }}</p>
                         </div>
-                        <p class="text-sm text-slate-700 mt-1">Par {{ review.authorName }} · ★ {{ review.rating }}/5</p>
-                        <p class="mt-2 text-slate-800">{{ review.comment }}</p>
-                    </article>
+
+                        @for (star of ratingSteps; track star) {
+                            <div class="flex items-center gap-3">
+                                <span class="w-16 text-sm font-semibold">{{ star }} étoile{{ star > 1 ? 's' : '' }}</span>
+                            <div class="h-3 w-full bg-slate-200 rounded-full overflow-hidden">
+                                <div
+                                    class="h-3 bg-amber-400 rounded-full"
+                                    [style.width.%]="distributionPercent(star)"
+                                ></div>
+                            </div>
+                                <span class="w-12 text-sm text-right">{{ distributionPercent(star) }}%</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="space-y-4">
+                    @if (!reviews()?.reviews?.length) {
+                        <p class="text-slate-700">Aucun avis pour le moment.</p>
+                    } @else {
+                        @for (review of reviews()!.reviews; track trackByReviewId($index, review)) {
+                        <article class="rounded-border border border-slate-200 p-4 bg-white">
+                            <div class="flex items-center justify-between gap-2 flex-wrap">
+                                <h3 class="font-bold">{{ review.title }}</h3>
+                                <span class="text-sm text-slate-600">{{ formatDate(review.createdAt) }}</span>
+                            </div>
+                                <p class="text-sm text-slate-700 mt-1">Par {{ review.authorName }} · ★ {{ review.rating }}/5</p>
+                                <p class="mt-2 text-slate-800">{{ review.comment }}</p>
+                        </article>
+                        }
                     }
+                    </div>
                 }
-                </div>
-            }
 
-            <section class="border-t border-slate-200 pt-6">
-                <h3 class="text-xl font-bold mb-4">Laisser un avis</h3>
+                <section class="border-t border-slate-200 pt-6">
+                    <h3 class="text-xl font-bold mb-4">Laisser un avis</h3>
 
-                <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
-                <div>
-                    <label class="block font-semibold mb-1">Nom</label>
-                    <input
-                    type="text"
-                    formControlName="authorName"
-                    class="w-full border rounded px-3 py-2 bg-white"
-                    />
-                </div>
+                    <form [formGroup]="reviewForm" (ngSubmit)="submitReview()" class="space-y-4">
+                        <div>
+                            <label class="block font-semibold mb-1">Nom</label>
+                            <input
+                                type="text"
+                                formControlName="authorName"
+                                class="w-full border rounded px-3 py-2 bg-white"
+                            />
+                        </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Note (1 à 5)</label>
-                    <select formControlName="rating" class="w-full border rounded px-3 py-2 bg-white">
-                    <option [ngValue]="0">Choisir une note</option>
-                    @for (star of ratingSteps; track star) {
-                        <option [ngValue]="star">{{ star }}</option>
-                    }
-                    </select>
-                </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Note (1 à 5)</label>
+                            <select formControlName="rating" class="w-full border rounded px-3 py-2 bg-white">
+                                <option [ngValue]="0">Choisir une note</option>
+                                @for (star of ratingSteps; track star) {
+                                    <option [ngValue]="star">{{ star }}</option>
+                                }
+                            </select>
+                        </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Titre</label>
-                    <input
-                    type="text"
-                    formControlName="title"
-                    class="w-full border rounded px-3 py-2 bg-white"
-                    />
-                </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Titre</label>
+                            <input
+                                type="text"
+                                formControlName="title"
+                                class="w-full border rounded px-3 py-2 bg-white"
+                            />
+                        </div>
 
-                <div>
-                    <label class="block font-semibold mb-1">Commentaire</label>
-                    <textarea
-                    formControlName="comment"
-                    rows="4"
-                    class="w-full border rounded px-3 py-2 bg-white"
-                    ></textarea>
-                </div>
+                        <div>
+                            <label class="block font-semibold mb-1">Commentaire</label>
+                            <textarea
+                                formControlName="comment"
+                                rows="4"
+                                class="w-full border rounded px-3 py-2 bg-white"
+                            ></textarea>
+                        </div>
 
-                <button
-                    type="submit"
-                    [disabled]="reviewForm.invalid || isSubmitting()"
-                    class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300 disabled:opacity-50"
-                >
-                    {{ isSubmitting() ? 'Envoi...' : 'Envoyer mon avis' }}
-                </button>
-                </form>
-            </section>
+                        <button
+                            type="submit"
+                            [disabled]="reviewForm.invalid || isSubmitting()"
+                            class="bg-[#181a24] text-[#ffe066] rounded-full px-6 py-2 font-semibold hover:bg-[#ffd54f] hover:text-[#181a24] transition-colors duration-300 disabled:opacity-50"
+                        >
+                            {{ isSubmitting() ? 'Envoi...' : 'Envoyer mon avis' }}
+                        </button>
+                    </form>
+                </section>
             </section>
         </div>
         }
